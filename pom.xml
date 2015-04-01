@@ -93,17 +93,11 @@
       <version>v3-rev130-1.20.0</version>
     </dependency>
 
+    <!-- HTML Parser. Added by cmg1 -->
     <dependency>
-      <groupId>edu.cmu.sphinx</groupId>
-      <artifactId>sphinx4-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-
-    <!-- only necessary for default acoustic and language models -->
-    <dependency>
-      <groupId>edu.cmu.sphinx</groupId>
-      <artifactId>sphinx4-data</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.8.1</version>
     </dependency>
     
 <!-- sphinx4 stuff -->
