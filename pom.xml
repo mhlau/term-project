@@ -78,8 +78,6 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.8.7</version>
     </dependency>
-<<<<<<< HEAD
-=======
 
     <!-- Google API Java Client dependency. Added by mhlau -->
     <dependency>
@@ -88,9 +86,7 @@
         <version>1.18.0-rc</version>
     </dependency>
 
-  </dependencies>
->>>>>>> 86d054e64f449eb95d98ec4502260aeb6e3f0b6f
-
+<!-- sphinx4 stuff -->
   <dependency>
     <groupId>edu.cmu.sphinx</groupId>
     <artifactId>sphinx4-core</artifactId>
