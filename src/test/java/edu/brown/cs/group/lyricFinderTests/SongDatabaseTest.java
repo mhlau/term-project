@@ -34,8 +34,7 @@ public class SongDatabaseTest {
   @Test
   public void getActorIDTest() {
     try {
-      SongDatabase sdb = new SongDatabase("songDB.sqlite3");
-      sdb.buildDatabase("");
+      SongDatabase sdb = new SongDatabase("testDB.sqlite3");
       assertTrue(true);
     } catch (ClassNotFoundException e) {
       // TODO Auto-generated catch block
