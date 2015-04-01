@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 
 public class NRCWordSource implements BooleanWordSource, Serializable {
   private static final long serialVersionUID = 564575476764L;
@@ -22,27 +23,27 @@ public class NRCWordSource implements BooleanWordSource, Serializable {
     while (scn.hasNext()) {
       String word = scn.next();
       String prop = scn.next();
-      int is = scn.nextInteger();
+      int is = scn.nextInt();
       Boolean b = (is == 1);
       if (data.containsKey(word)) {
         data.get(word).put(prop, b);
       } else {
         HashMap<String, Boolean> ne = new HashMap<String, Boolean>();
         ne.put(prop, b);
-        data.put(ne);
+        data.put(word, ne);
       }
     }
   }
   @Override
-  Set<String> properties() {
+  public Set<String> properties() {
     return properties;
   }
   @Override  
-  boolean hasWord(String word) {
+  public boolean hasWord(String word) {
     return data.containsKey(word);
   }
   @Override  
-  Boolean getProperty(String word, String property) {
+  public Boolean getProperty(String word, String property) {
     if (data.containsKey(word)) {
       return data.get(word).get(property);
     } else {
@@ -50,7 +51,7 @@ public class NRCWordSource implements BooleanWordSource, Serializable {
     }
   }
   @Override  
-  Map<String, Boolean> getAllProperties(String word) {
+  public Map<String, Boolean> getAllProperties(String word) {
     if (data.containsKey(word)) {
       return new HashMap<String, Boolean>(data.get(word));
     } else {
