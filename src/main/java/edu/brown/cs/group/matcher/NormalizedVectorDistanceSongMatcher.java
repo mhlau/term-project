@@ -84,4 +84,9 @@ public class NormalizedVectorDistanceSongMatcher implements SongMatcher,
       return o1.getValue().compareTo(o2.getValue());
     }
   }
+  @Override
+  public String toString() {
+    return "Normalized Vector Distance Matcher with Word Source "
+      + ws.toString();
+  }
 }

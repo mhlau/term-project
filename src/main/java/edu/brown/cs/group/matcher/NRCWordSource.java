@@ -58,5 +58,9 @@ public class NRCWordSource implements BooleanWordSource, Serializable {
       return null;
     }
   }
+  @Override
+  public String toString() {
+    return "NRC Word Source 1.0";
+  }
 }
 
