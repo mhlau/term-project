@@ -1,4 +1,4 @@
-package edu.brown.cs.cmg1.lyricFinder;
+package edu.brown.cs.group.lyricFinder;
 
 public class Song {
 
