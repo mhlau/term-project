@@ -1,6 +1,6 @@
 package edu.brown.cs.group.matcher;
-import edu.brown.cs.group.Song;
-import edu.brown.cs.group.SongDatabase;
+import edu.brown.cs.group.lyricFinder.Song;
+import edu.brown.cs.group.lyricFinder.SongDatabase;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
@@ -14,8 +14,10 @@ public class NormalizedVectorDistanceSongMatcher implements SongMatcher,
   private static final long serialVersionUID = 342343L;
   Map<Integer, double[]> songVectors;
   List<String>  cats;
+  SongDatabase ld;
   public NormalizedVectorDistanceSongMatcher(BooleanWordSource ws, SongDatabase
     ld) {
+    this.ld  = ld;
     List<Song> songs = ld.getAllSongs();
     songVector= new  HashMap<Integer, double[]>();
     cats = new ArrayList<String>(ws.getProperties());
@@ -61,16 +63,17 @@ public class NormalizedVectorDistanceSongMatcher implements SongMatcher,
       toSort.add(new AbstractMap.SimpleEntry<Integer, Double>(
         m.getKey(), dist(m.getValue(), v)));
     }
-    List<Song> ret = new ArrayList<Song>()
+    List<Song> ret = new ArrayList<Song>();
+    EntryOrder oder = new EntryOrder();
     while (toSort.size() > 0 && numResults > 0) {
       numResults--;
-      Map.Entry<Integer, Double> b = Collections.min(toSort);
+      Map.Entry<Integer, Double> b = Collections.min(toSort, oder);
       ret.add(ld.getSong(b.getKey()));
       toSort.remove(b);
     }
     return ret;
   }
-  private class entryOrder implements Comparator<Map.Entry<Integer, Double>> {
+  private class EntryOrder implements Comparator<Map.Entry<Integer, Double>> {
     @Override
     public int compare(Map.Entry<Integer, Double> o1,
         Map.Entry<Integer, Double> o2) {
