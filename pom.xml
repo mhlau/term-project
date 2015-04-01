@@ -78,8 +78,29 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.8.7</version>
     </dependency>
-  </dependencies>
 
+    <!-- Google API Java Client dependency. Added by mhlau -->
+    <dependency>
+        <groupId>com.google.api-client</groupId>
+        <artifactId>google-api-client</artifactId>
+        <version>1.18.0-rc</version>
+    </dependency>
+
+<!-- sphinx4 stuff -->
+  <dependency>
+    <groupId>edu.cmu.sphinx</groupId>
+    <artifactId>sphinx4-core</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </dependency>
+
+<!-- only necessary for default acoustic and language models -->
+  <dependency>
+    <groupId>edu.cmu.sphinx</groupId>
+    <artifactId>sphinx4-data</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </dependency>
+  </dependencies>
+  
   <build>
     <plugins>
       <plugin>
@@ -144,4 +165,14 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <repositories>
+    <repository>
+      <id>snapshots-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+  </repositories>
+
 </project>
