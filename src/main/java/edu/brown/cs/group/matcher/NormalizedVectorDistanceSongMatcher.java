@@ -2,25 +2,29 @@ package edu.brown.cs.group.matcher;
 import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.lyricFinder.SongDatabase;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Comparator;
-import java.util.AbstractMap.SimpleEntry;
+import java.util.AbstractMap;
 import java.util.Map.Entry;
 import java.util.Collections;
+import java.io.Serializable;
 public class NormalizedVectorDistanceSongMatcher implements SongMatcher, 
   Serializable {
   private static final long serialVersionUID = 342343L;
   Map<Integer, double[]> songVectors;
   List<String>  cats;
   SongDatabase ld;
+  BooleanWordSource ws;
   public NormalizedVectorDistanceSongMatcher(BooleanWordSource ws, SongDatabase
     ld) {
     this.ld  = ld;
+    this.ws = ws;
     List<Song> songs = ld.getAllSongs();
-    songVector= new  HashMap<Integer, double[]>();
-    cats = new ArrayList<String>(ws.getProperties());
+    songVectors = new  HashMap<Integer, double[]>();
+    cats = new ArrayList<String>(ws.properties());
     for (Song s: songs) {
       songVectors.put(s.getID(), vectorize(s.getLyrics()));
     }
@@ -59,7 +63,7 @@ public class NormalizedVectorDistanceSongMatcher implements SongMatcher,
     double[] v = vectorize(dialogue);
     List<Map.Entry<Integer, Double>> toSort = 
       new LinkedList<Map.Entry<Integer, Double>>();
-    for (Map.Entry<Integer, double[]> m : songVectors) {
+    for (Map.Entry<Integer, double[]> m : songVectors.entrySet()) {
       toSort.add(new AbstractMap.SimpleEntry<Integer, Double>(
         m.getKey(), dist(m.getValue(), v)));
     }
