@@ -41,20 +41,19 @@ public class SongDatabase {
   // this should prob not take anything and just use the connection...
   public static void buildDatabase(String path) {
     try {
-      for (int id = 1; id <= 1; id++) {
+      for (int id = 1; id <= 2; id++) {
         Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
         
         String artistAndTitle = doc.title();
-        String[] split = artistAndTitle.split(" - ");
+        String[] split = artistAndTitle.split(" - "); // find a better regexp
         for (String s : split) { 
           System.out.println(s);
         }
-        
-        Elements lyrics = doc.body().getElementsByClass("holder lyric-box");
-        System.out.println(lyrics);
+
+        Elements lyrics = doc.body().getElementsByClass("lyric-box");
         for (Element l : lyrics) {
           String s = l.text();
-          System.out.println(artistAndTitle + " " + s);
+          System.out.println(artistAndTitle + "\n " + s);
         }
       }
     } catch (IOException e) {
