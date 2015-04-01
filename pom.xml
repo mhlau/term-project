@@ -78,6 +78,18 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.8.7</version>
     </dependency>
+<<<<<<< HEAD
+=======
+
+    <!-- Google API Java Client dependency. Added by mhlau -->
+    <dependency>
+        <groupId>com.google.api-client</groupId>
+        <artifactId>google-api-client</artifactId>
+        <version>1.18.0-rc</version>
+    </dependency>
+
+  </dependencies>
+>>>>>>> 86d054e64f449eb95d98ec4502260aeb6e3f0b6f
 
   <dependency>
     <groupId>edu.cmu.sphinx</groupId>
