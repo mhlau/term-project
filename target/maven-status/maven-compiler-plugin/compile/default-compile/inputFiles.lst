@@ -1,7 +1,7 @@
-/gpfs/main/home/gpane/course/cs032/term-project/src/main/java/edu/brown/cs/group/ytsearch/package-info.java
-/gpfs/main/home/gpane/course/cs032/term-project/src/main/java/edu/brown/cs/group/lyricFinder/SongDatabase.java
-/gpfs/main/home/gpane/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/SpeechToText.java
-/gpfs/main/home/gpane/course/cs032/term-project/src/main/java/edu/brown/cs/group/ytsearch/YouTubeSearch.java
-/gpfs/main/home/gpane/course/cs032/term-project/src/main/java/edu/brown/cs/group/lyricFinder/Song.java
-/gpfs/main/home/gpane/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/FromFile.java
-/gpfs/main/home/gpane/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/LiveMode.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/ytsearch/YouTubeSearch.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/lyricFinder/Song.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/ytsearch/package-info.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/LiveMode.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/lyricFinder/SongDatabase.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/FromFile.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/SpeechToText.java
