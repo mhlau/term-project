@@ -12,6 +12,12 @@ import org.jsoup.select.Elements;
 
 public class SongDatabase {
   private Connection conn;
+  
+  public static void main(String args[]) {
+    System.out.println("Calling buildDatabase");
+    buildDatabase("");
+    System.out.println("Returned from buildDatabase");
+  }
 
   public SongDatabase(String db) throws ClassNotFoundException {
     Class.forName("org.sqlite.JDBC");
@@ -33,12 +39,19 @@ public class SongDatabase {
   }
 
   // this should prob not take anything and just use the connection...
-  public void buildDatabase(String path) {
+  public static void buildDatabase(String path) {
     try {
-      for (int id = 1; id <= 5; id++) {
+      for (int id = 1; id <= 1; id++) {
         Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
+        
         String artistAndTitle = doc.title();
+        String[] split = artistAndTitle.split(" - ");
+        for (String s : split) { 
+          System.out.println(s);
+        }
+        
         Elements lyrics = doc.body().getElementsByClass("holder lyric-box");
+        System.out.println(lyrics);
         for (Element l : lyrics) {
           String s = l.text();
           System.out.println(artistAndTitle + " " + s);

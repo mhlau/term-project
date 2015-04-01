@@ -36,6 +36,7 @@ public class SongDatabaseTest {
     try {
       SongDatabase sdb = new SongDatabase("songDB.sqlite3");
       sdb.buildDatabase("");
+      assertTrue(true);
     } catch (ClassNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
