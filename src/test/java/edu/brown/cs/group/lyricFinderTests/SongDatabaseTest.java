@@ -2,6 +2,8 @@ package edu.brown.cs.group.lyricFinderTests;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -32,13 +34,15 @@ public class SongDatabaseTest {
   }
 
   @Test
-  public void getActorIDTest() {
+  public void buildDatabaseTest() {
     try {
       SongDatabase sdb = new SongDatabase("testDB.sqlite3");
-      assertTrue(true);
+      File file = new File("testDB.sqlite3");
+      assertTrue(file.exists());
     } catch (ClassNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
+
 }
