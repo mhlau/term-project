@@ -36,6 +36,7 @@ public class SongDatabaseTest {
   @Test
   public void buildDatabaseTest() {
     try {
+      @SuppressWarnings("unused")
       SongDatabase sdb = new SongDatabase("testDB.sqlite3");
       File file = new File("testDB.sqlite3");
       assertTrue(file.exists());
