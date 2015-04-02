@@ -22,14 +22,14 @@ public class NormalizedVectorDistanceSongMatcher implements SongMatcher,
     ld) {
     this.ld  = ld;
     this.ws = ws;
-    List<Song> songs = ld.getAllSongs();
     songVectors = new  HashMap<Integer, double[]>();
     cats = new ArrayList<String>(ws.properties());
+    List<Song> songs = ld.getAllSongs();
     for (Song s: songs) {
       songVectors.put(s.getID(), vectorize(s.getLyrics()));
     }
   }
-  private double[] vectorize(List<String> words) {
+  private double[] vectorize(List<String> words) { 
     int[] counts = new int[cats.size()];
     for (String word: words) {
       if (ws.hasWord(word)) {
@@ -40,14 +40,14 @@ public class NormalizedVectorDistanceSongMatcher implements SongMatcher,
     }
     double sum = 0.0;
     for (int i : counts) {
-      sum += i;
+      sum += i*i;
     }
     if (sum == 0) {
       sum = 1.0;
     }
     double[] vect = new double[cats.size()];
     for (int i = 0; i < cats.size(); i++) {
-      vect[i] = counts[i]/sum;
+      vect[i] = counts[i]/Math.sqrt(sum);
     }
     return vect;
   }

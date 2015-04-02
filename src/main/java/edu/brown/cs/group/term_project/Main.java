@@ -8,6 +8,7 @@ import edu.brown.cs.group.matcher.NormalizedVectorDistanceSongMatcher;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.File;
 
 public final class Main {
@@ -22,6 +23,7 @@ public final class Main {
     BooleanWordSource ws = new NRCWordSource(new File(args[1]));
     SongMatcher sm = new NormalizedVectorDistanceSongMatcher(ws, db);
     Scanner sc = new Scanner(System.in);
+    sc.useDelimiter("[^a-zA-Z]");
     List<String> dialog = new ArrayList<String>();
     while (sc.hasNext()) {
       dialog.add(sc.next().toLowerCase());
