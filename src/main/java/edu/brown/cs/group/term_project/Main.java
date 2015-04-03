@@ -8,7 +8,6 @@ import edu.brown.cs.group.matcher.NormalizedVectorDistanceSongMatcher;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.io.File;
 
 public final class Main {
@@ -28,6 +27,7 @@ public final class Main {
     while (sc.hasNext()) {
       dialog.add(sc.next().toLowerCase());
     }
+    sc.close();
     List<Song> res = sm.match(dialog, 5);
     for (Song s : res) {
       System.out.println(s.getTitle());

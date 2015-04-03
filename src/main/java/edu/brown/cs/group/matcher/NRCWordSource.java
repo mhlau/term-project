@@ -33,6 +33,7 @@ public class NRCWordSource implements BooleanWordSource, Serializable {
         data.put(word, ne);
       }
     }
+    scn.close();
   }
   @Override
   public Set<String> properties() {
