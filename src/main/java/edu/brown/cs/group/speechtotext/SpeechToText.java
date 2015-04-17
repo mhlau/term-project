@@ -20,6 +20,6 @@ public abstract class SpeechToText {
         configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
 	}
 	
-	abstract List<String> start() throws FileNotFoundException;
+	abstract public List<String> getWords() throws FileNotFoundException;
 	
 }
