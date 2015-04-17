@@ -18,7 +18,8 @@ public final class Main {
 
   public static void main(String[] args) throws Exception {   //Returns names of top 5 songs
     System.out.println("Main is running.");
-    SongDatabase db = new SongDatabase(args[0]);
+        
+    SongDatabase db = new SongDatabase(args[0], Integer.valueOf(args[2]));
     BooleanWordSource ws = new NRCWordSource(new File(args[1]));
     SongMatcher sm = new NormalizedVectorDistanceSongMatcher(ws, db);
     Scanner sc = new Scanner(System.in);

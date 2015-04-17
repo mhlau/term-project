@@ -21,7 +21,7 @@ import org.jsoup.select.Elements;
 import org.jsoup.HttpStatusException;
 
 public class SongDatabase {
-  private final int NUM_OF_SONGS_TO_GET = 20;
+ // private final int NUM_OF_SONGS_TO_GET = 20;
   private Connection conn;
   private Map<Integer, Song> idToSongMap;
   
@@ -34,7 +34,7 @@ public class SongDatabase {
   }
   */
   
-  public SongDatabase(String db) throws ClassNotFoundException {
+  public SongDatabase(String db, int songsToGetIfRebuild) throws ClassNotFoundException {
     Class.forName("org.sqlite.JDBC");
     String urlToDB = "jdbc:sqlite:" + db;
 
@@ -42,7 +42,7 @@ public class SongDatabase {
       this.conn = DriverManager.getConnection(urlToDB);
 
       if (dbShouldBeBuilt()) {
-        buildDatabase();
+        buildDatabase(songsToGetIfRebuild);
       }
     } catch (SQLException e) {
       // TODO Auto-generated catch block
@@ -72,7 +72,7 @@ public class SongDatabase {
     }
   }
 
-  private void buildDatabase() throws SQLException {
+  private void buildDatabase(int numSongs) throws SQLException {
     System.out.println("Building database...");
     String schema = "CREATE TABLE song(id INT, artist TEXT, title TEXT, lyrics TEXT);";
     buildTable(schema);
@@ -80,7 +80,7 @@ public class SongDatabase {
     PreparedStatement ps = conn.prepareStatement(insert);
 
     try {
-      for (int id = 1; id <= NUM_OF_SONGS_TO_GET; id++) {
+      for (int id = 1; id <= numSongs; id++) {
         try {
           Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
           String artistAndTitle = doc.title();
