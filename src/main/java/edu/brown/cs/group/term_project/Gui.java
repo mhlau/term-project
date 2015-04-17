@@ -46,7 +46,6 @@ public class Gui {
     public Object handle(Request request, Response response) {
       QueryParamsMap qm = request.queryMap();
       String searchVal = qm.value("searchVal");
-      System.out.println(searchVal);
       String embedUrl = "";
       JsonObject resultObject = new JsonObject();
       if (searchVal != null) {

@@ -11,7 +11,7 @@ var search = function() {
 		response = JSON.parse(responseJSON);
 		resultUrl = response.resultUrl;
 		resultUrlText.innerHTML = "<iframe width=\"560\" height=\"315\"" + 
-		"src=\"" + resultUrl.resultUrl + "\""
+		"src=\"" + resultUrl.resultUrl + "?autoplay=1\""
 		+ " frameborder=\"0\" allowfullscreen></iframe>";
 		console.log(resultUrl);		
 	});
