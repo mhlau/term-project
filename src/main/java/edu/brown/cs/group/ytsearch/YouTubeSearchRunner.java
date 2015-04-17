@@ -1,5 +1,6 @@
 package edu.brown.cs.group.ytsearch;
 
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -27,9 +28,13 @@ public class YouTubeSearchRunner {
       "src/main/java/edu/brown/cs/group/ytsearch/youtube.properties";
   private static final String YOUTUBE_VIDEO_URL_PREFIX =
       "https://www.youtube.com/watch?v=";
+  private static final String YOUTUBE_EMBED_URL_PREFIX = 
+      "https://www.youtube.com/embed/";
   private static final long NUM_VIDEOS_RETURNED = 1;
   private static YouTube youtube;
   private static List<SearchResult> searchResultList;
+  private static String resultUrl;
+  private static String embedUrl;
 
   /**
    * Private constructor - contains only static methods.
@@ -76,6 +81,7 @@ public class YouTubeSearchRunner {
       search.setMaxResults(NUM_VIDEOS_RETURNED);
       SearchListResponse searchResponse = search.execute();
       searchResultList = searchResponse.getItems();
+      setResults();
     } catch (GoogleJsonResponseException e) {
       System.err.println("ERROR: a service error occurred: "
           + e.getDetails().getCode() + " : " + e.getDetails().getMessage());
@@ -91,17 +97,35 @@ public class YouTubeSearchRunner {
   /**
    * Prints the results of the search.
    */
-  public static void printResults() {
+  public static void setResults() {
     Iterator<SearchResult> searchResultsIterator = searchResultList.iterator();
     while (searchResultsIterator.hasNext()) {
       SearchResult video = searchResultsIterator.next();
       ResourceId rId = video.getId();
       if (rId.getKind().equals("youtube#video")) {
-        System.out.println("Top result: "
-            + YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId());
-        System.out.println("Title: " + video.getSnippet().getTitle());
+        resultUrl = YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId();
+        embedUrl = YOUTUBE_EMBED_URL_PREFIX + rId.getVideoId();
+//        System.out.println("Result: "
+//            + YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId());
+//        System.out.println("Title: " + video.getSnippet().getTitle());
       }
     }
+  }
+  
+  /**
+   * Accesses the URL of the top video in the search.
+   * @return The YouTube video URL.
+   */
+  public static String resultUrl() {
+    return resultUrl;
+  }
+  
+  /**
+   * Accesses the YouTube URL for embedding purposes.
+   * @return The YouTube embed URL.
+   */
+  public static String embedUrl() {
+    return embedUrl;
   }
 
 }
