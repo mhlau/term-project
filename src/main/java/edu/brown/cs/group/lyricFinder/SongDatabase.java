@@ -21,7 +21,6 @@ import org.jsoup.select.Elements;
 import org.jsoup.HttpStatusException;
 
 public class SongDatabase {
- // private final int NUM_OF_SONGS_TO_GET = 20;
   private Connection conn;
   private Map<Integer, Song> idToSongMap;
   
@@ -110,27 +109,22 @@ public class SongDatabase {
 
           String artistAndTitle = pageTitle.replace(" Lyrics | SongMeanings", "");
           String[] split = artistAndTitle.split(" - ");
-          /*
-          for (String s : split) { 
-            System.out.println(s);
-          }
-          */
 
           Elements lyrics = doc.body().getElementsByClass("lyric-box");
           for (Element l : lyrics) {
             String s = l.text().replace(" Edit Lyrics Edit Wiki Add Video", "");
-            
+            /*
             System.out.println("id: " + id);
             System.out.println("artist: " + split[0]);
             System.out.println("title: " + split[1]);
             System.out.println("lyrics: " + s);
             System.out.println();
-            
+            */
             ps.setInt(1, id);
             ps.setString(2, split[0]);
             ps.setString(3, split[1]);
             ps.setString(4, s);
-            //System.out.println(artistAndTitle + "\n " + s);
+
             ps.addBatch();
           }
         } catch (HttpStatusException | SocketTimeoutException e) {
@@ -152,13 +146,11 @@ public class SongDatabase {
     prep.close();
   }
 
-  // Will most likely not be needed
-  /*
-  private void connectToDatabase(String path) {
-    
-  }
-  */
-
+  /**
+   * 
+   * @param id
+   * @return
+   */
   public Song getSong(int id) {
     if (idToSongMap.containsKey(id)) {
       return idToSongMap.get(id);
@@ -190,6 +182,10 @@ public class SongDatabase {
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Song> getAllSongs() {
     String query = "SELECT * FROM song;";
 
