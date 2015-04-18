@@ -28,11 +28,31 @@ public class SongDatabase {
   /*
   // Just for testing stuff
   public static void main(String args[]) {
-    System.out.println("Calling buildDatabase");
-    buildDatabase("");
-    System.out.println("Returned from buildDatabase");
+    String testString = "Pink Floyd - See Emily Play Lyrics | SongMeanings";
+    
+    String[] test1 = testString.split(" - ");
+    System.out.println("test1");
+    for (String s : test1) {
+      System.out.println(s);
+    }
+    System.out.println();
+    
+    String[] test2 = testString.split(" Lyrics | SongMeanings");
+    System.out.println("test2");
+    for (String s : test2) {
+      System.out.println(s);
+    }
+    System.out.println();
+    
+    String replacement = testString.replace(" Lyrics | SongMeanings", "");
+    String[] test3 = replacement.split(" - ");
+    System.out.println("test3");
+    for (String s : test3) {
+      System.out.println(s);
+    }
   }
   */
+  
   
   public SongDatabase(String db, int songsToGetIfRebuild) throws ClassNotFoundException {
     Class.forName("org.sqlite.JDBC");
@@ -83,12 +103,13 @@ public class SongDatabase {
       for (int id = 1; id <= numSongs; id++) {
         try {
           Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
-          String artistAndTitle = doc.title();
-          if (artistAndTitle.equals("Error retrieving lyric")) {
+          String pageTitle = doc.title();
+          if (pageTitle.equals("Error retrieving lyric")) {
             continue;
           }
 
-          String[] split = artistAndTitle.split(" - "); // find a better regexp
+          String artistAndTitle = pageTitle.replace(" Lyrics | SongMeanings", "");
+          String[] split = artistAndTitle.split(" - ");
           /*
           for (String s : split) { 
             System.out.println(s);
@@ -97,7 +118,13 @@ public class SongDatabase {
 
           Elements lyrics = doc.body().getElementsByClass("lyric-box");
           for (Element l : lyrics) {
-            String s = l.text();
+            String s = l.text().replace(" Edit Lyrics Edit Wiki Add Video", "");
+            
+            System.out.println("id: " + id);
+            System.out.println("artist: " + split[0]);
+            System.out.println("title: " + split[1]);
+            System.out.println("lyrics: " + s);
+            System.out.println();
             
             ps.setInt(1, id);
             ps.setString(2, split[0]);
