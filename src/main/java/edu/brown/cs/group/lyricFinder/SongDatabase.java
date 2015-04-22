@@ -96,12 +96,12 @@ public class SongDatabase {
 
   private void buildDatabase(int numSongs) throws SQLException, InterruptedException {
     System.out.println("Building database...");
-    String schema = "CREATE TABLE song(id INT, artist TEXT, title TEXT, lyrics TEXT);";
+    String schema = "CREATE TABLE song(id INT PRIMARY KEY, artist TEXT, title TEXT, lyrics TEXT);";
     buildTable(schema);
     
     SongDatabaseThread[] sd = new SongDatabaseThread[NUM_THREADS];
 
-    int start = 0;
+    int start = 1;
     int songsPerThread = numSongs / NUM_THREADS;
     System.out.println("Songs per thread: " + songsPerThread);
     int end = songsPerThread;
@@ -111,13 +111,14 @@ public class SongDatabase {
       start = end;
       end += songsPerThread;
     }
-
+    long startTime = System.currentTimeMillis();
     System.out.println("Threads started, now waiting to join...");
     for (SongDatabaseThread sdt : sd) {
       sdt.join();
     }
-    
-    System.out.println("Database built");
+    long endTime = System.currentTimeMillis();
+    long totalTime = endTime - startTime;
+    System.out.println("Database built. Took " + totalTime + " ms");
   }
 
   private void buildTable(String schema) throws SQLException {
