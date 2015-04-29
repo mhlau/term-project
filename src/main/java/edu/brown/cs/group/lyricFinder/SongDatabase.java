@@ -1,7 +1,5 @@
 package edu.brown.cs.group.lyricFinder;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -14,23 +12,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.jsoup.HttpStatusException;
-
 public class SongDatabase {
- // private final int NUM_OF_SONGS_TO_GET = 20;
+  private final int NUM_THREADS = 4;
   private Connection conn;
   private Map<Integer, Song> idToSongMap;
   
   /*
   // Just for testing stuff
   public static void main(String args[]) {
-    System.out.println("Calling buildDatabase");
-    buildDatabase("");
-    System.out.println("Returned from buildDatabase");
+    String testString = "Pink Floyd - See Emily Play Lyrics | SongMeanings";
+    
+    String[] test1 = testString.split(" - ");
+    System.out.println("test1");
+    for (String s : test1) {
+      System.out.println(s);
+    }
+    System.out.println();
+    
+    String[] test2 = testString.split(" Lyrics | SongMeanings");
+    System.out.println("test2");
+    for (String s : test2) {
+      System.out.println(s);
+    }
+    System.out.println();
+    
+    String replacement = testString.replace(" Lyrics | SongMeanings", "");
+    String[] test3 = replacement.split(" - ");
+    System.out.println("test3");
+    for (String s : test3) {
+      System.out.println(s);
+    }
+    
+    String testLyrics = "What I've kept with me And what I've thrown away And where the hell I've ended up On this glory random day Were the things I really cared about Just left along the way For being too pent up and proud Woke up way too late Feeling hung over and old And the sun was shining bright And I walked barefoot down the road Started thing about my old man It seems that all men Want to get into a car and go anywhere? Here I stand, Sad and free I can't cry and I can't see What I've done God, what have I done So don't you know I'm numb, man No I don't feel a thing at all Cause its all smiles and business these days And I am indifferent to the loss I've faith that there's a soul Whose leading me around I wonder if she knows Which way is down I poured my heart out I poured my heart out It evaporated, see? Blind man on a canyon's edge Of a Panoramic scene Or maybe I'm a kite That's flying high & random Dangling a string Or slumped over in a vacant room Head on a stranger's knee I'm sure back home They think I've lost my mind.";
+    String words = testLyrics.replaceAll("[^a-zA-Z ]", "").toLowerCase();
+    System.out.println(words);
+    String[] wordsSplit = words.split("\\s+");
+    for (String s : wordsSplit) {
+      System.out.println(s);
+    }
   }
   */
   
@@ -48,6 +67,9 @@ public class SongDatabase {
       // TODO Auto-generated catch block
       System.out.println(e.getErrorCode());
       System.out.println(e.getSQLState());
+      e.printStackTrace();
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
@@ -72,51 +94,31 @@ public class SongDatabase {
     }
   }
 
-  private void buildDatabase(int numSongs) throws SQLException {
+  private void buildDatabase(int numSongs) throws SQLException, InterruptedException {
     System.out.println("Building database...");
-    String schema = "CREATE TABLE song(id INT, artist TEXT, title TEXT, lyrics TEXT);";
+    String schema = "CREATE TABLE song(id INT PRIMARY KEY, artist TEXT, title TEXT, lyrics TEXT);";
     buildTable(schema);
-    String insert = "INSERT INTO song VALUES(?,?,?,?);";
-    PreparedStatement ps = conn.prepareStatement(insert);
+    
+    SongDatabaseThread[] sd = new SongDatabaseThread[NUM_THREADS];
 
-    try {
-      for (int id = 1; id <= numSongs; id++) {
-        try {
-          Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
-          String artistAndTitle = doc.title();
-          if (artistAndTitle.equals("Error retrieving lyric")) {
-            continue;
-          }
-
-          String[] split = artistAndTitle.split(" - "); // find a better regexp
-          /*
-          for (String s : split) { 
-            System.out.println(s);
-          }
-          */
-
-          Elements lyrics = doc.body().getElementsByClass("lyric-box");
-          for (Element l : lyrics) {
-            String s = l.text();
-            
-            ps.setInt(1, id);
-            ps.setString(2, split[0]);
-            ps.setString(3, split[1]);
-            ps.setString(4, s);
-            //System.out.println(artistAndTitle + "\n " + s);
-            ps.addBatch();
-          }
-        } catch (HttpStatusException | SocketTimeoutException e) {
-          continue;
-        }
-      }
-
-      ps.executeBatch();
-      ps.close();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    int start = 1;
+    int songsPerThread = numSongs / NUM_THREADS;
+    System.out.println("Songs per thread: " + songsPerThread);
+    int end = songsPerThread;
+    for (int i = 0; i < sd.length; i++) {
+      sd[i] = new SongDatabaseThread(conn, start, end);
+      sd[i].start();
+      start = end;
+      end += songsPerThread;
     }
+    long startTime = System.currentTimeMillis();
+    System.out.println("Threads started, now waiting to join...");
+    for (SongDatabaseThread sdt : sd) {
+      sdt.join();
+    }
+    long endTime = System.currentTimeMillis();
+    long totalTime = endTime - startTime;
+    System.out.println("Database built. Took " + totalTime + " ms");
   }
 
   private void buildTable(String schema) throws SQLException {
@@ -125,13 +127,11 @@ public class SongDatabase {
     prep.close();
   }
 
-  // Will most likely not be needed
-  /*
-  private void connectToDatabase(String path) {
-    
-  }
-  */
-
+  /**
+   * 
+   * @param id
+   * @return
+   */
   public Song getSong(int id) {
     if (idToSongMap.containsKey(id)) {
       return idToSongMap.get(id);
@@ -163,6 +163,10 @@ public class SongDatabase {
     }
   }
 
+  /**
+   * 
+   * @return
+   */
   public List<Song> getAllSongs() {
     String query = "SELECT * FROM song;";
 
