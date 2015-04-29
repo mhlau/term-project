@@ -24,13 +24,8 @@ public final class Main {
 
   }
 
-  public static void main(String[] args) throws Exception {
-    //Returns names of top 5 songs
-    System.out.println("Main is running.");
-    Gui gui = new Gui();
+  public static void main(String[] args) throws Exception { 
     SongDatabase db = new SongDatabase(args[0], 15);
-    List<String> dialogue = new ArrayList<String>();
-    //SongMatcher sm = new TopicMatcher(new BufferedReader(new FileReader(args[1])), db.getAllSongs());
     List<Song> allSongs = db.getAllSongs();
     SongMatcher sm = new TwoSourceMatcher(
       new SongSourceDistance(
@@ -38,23 +33,6 @@ public final class Main {
       new SongSourceDistance(
         new BufferedReader(new FileReader(args[2])) , allSongs),
       allSongs, .8);
-    if (args.length > 3 && args[3].equals("--speech")){
-    	LiveMode lm = new LiveMode();
-    	dialogue = lm.getWords();
-    } else {
-      System.out.println("Ready");
-	    Scanner sc = new Scanner(System.in);
-	    sc.useDelimiter("[^a-zA-Z]");
-	    while (sc.hasNext()) {
-	      dialogue.add(sc.next().toLowerCase());
-	    }
-	    sc.close();
-    }
-    System.out.println("\nLooking for songs...");
-    List<Song> res = sm.match(dialogue, 5);
-    for (Song s : res) {
-      System.out.println(s.getTitle());
-    }
+    Gui gui = new Gui(sm);
   }
-
 }
