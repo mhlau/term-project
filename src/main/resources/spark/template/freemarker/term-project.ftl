@@ -3,7 +3,9 @@
 
 <div class="wrapper">
     <div>
-    <input type="text" id="searchInput">
+    <textarea id="searchInput" cols=50 rows=25>
+    </textarea>
+    <button id="recordButton" style="font: bold 14px Arial">Record</button>
     </div>
     <p id="resultUrl"></p>
     </br>
