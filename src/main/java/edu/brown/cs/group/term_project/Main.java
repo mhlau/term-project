@@ -1,23 +1,14 @@
 package edu.brown.cs.group.term_project;
-import edu.brown.cs.group.lyricFinder.SongDatabase;
-import edu.brown.cs.group.lyricFinder.Song;
-import edu.brown.cs.group.matcher.BooleanWordSource;
-import edu.brown.cs.group.matcher.NRCWordSource;
-import edu.brown.cs.group.matcher.SongMatcher;
-import edu.brown.cs.group.matcher.NormalizedVectorDistanceSongMatcher;
-import edu.brown.cs.group.matcher.TopicMatcher;
-import edu.brown.cs.group.matcher.SongSourceDistance;
-import edu.brown.cs.group.matcher.TwoSourceMatcher;
-import edu.brown.cs.group.speechtotext.FromFile;
-import edu.brown.cs.group.speechtotext.LiveMode;
-import edu.brown.cs.group.speechtotext.SpokenWord;
-
-import java.util.Scanner;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.List;
+
+import edu.brown.cs.group.lyricFinder.Song;
+import edu.brown.cs.group.lyricFinder.SongDatabase;
+import edu.brown.cs.group.matcher.SongMatcher;
+import edu.brown.cs.group.matcher.SongSourceDistance;
+import edu.brown.cs.group.matcher.TwoSourceMatcher;
+
 public final class Main {
 
   private Main() {
@@ -33,6 +24,6 @@ public final class Main {
       new SongSourceDistance(
         new BufferedReader(new FileReader(args[2])) , allSongs),
       allSongs, .8);
-    Gui gui = new Gui(sm);
+    new Gui(sm);
   }
 }
