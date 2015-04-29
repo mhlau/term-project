@@ -13,7 +13,7 @@ public class Song implements Serializable {
 
   public Song(int id, String artist, String title, List<String> lyrics) {
     this.id = id;
-    this.artist = title;
+    this.artist = artist;
     this.title = title;
     this.lyrics = lyrics;
   }
