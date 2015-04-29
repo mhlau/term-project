@@ -1,5 +1,5 @@
 target/
-
+target/maven-archiver/pom.properties
 .DS_Store
 target/term-project-1.0.jar
 testDB.sqlite3
