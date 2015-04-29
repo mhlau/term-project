@@ -24,7 +24,8 @@ public final class Main {
 
   }
 
-  public static void main(String[] args) throws Exception {   //Returns names of top 5 songs
+  public static void main(String[] args) throws Exception {
+    //Returns names of top 5 songs
     System.out.println("Main is running.");
     Gui gui = new Gui();
     SongDatabase db = new SongDatabase(args[0], 15);

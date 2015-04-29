@@ -31,6 +31,7 @@ public class YouTubeSearchRunner {
   private static final String YOUTUBE_EMBED_URL_PREFIX = 
       "https://www.youtube.com/embed/";
   private static final long NUM_VIDEOS_RETURNED = 1;
+  private static final boolean DEBUG = true;
   private static YouTube youtube;
   private static List<SearchResult> searchResultList;
   private static String resultUrl;
@@ -95,9 +96,9 @@ public class YouTubeSearchRunner {
   }
 
   /**
-   * Prints the results of the search.
+   * Uses the search result to set URL results.
    */
-  public static void setResults() {
+  private static void setResults() {
     Iterator<SearchResult> searchResultsIterator = searchResultList.iterator();
     while (searchResultsIterator.hasNext()) {
       SearchResult video = searchResultsIterator.next();
@@ -105,9 +106,13 @@ public class YouTubeSearchRunner {
       if (rId.getKind().equals("youtube#video")) {
         resultUrl = YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId();
         embedUrl = YOUTUBE_EMBED_URL_PREFIX + rId.getVideoId();
-//        System.out.println("Result: "
-//            + YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId());
-//        System.out.println("Title: " + video.getSnippet().getTitle());
+        if (DEBUG) {
+          System.out.println("[DEBUG] Result URL: "
+            + YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId());
+          System.out.println("[DEBUG] Embed URL: " 
+            + YOUTUBE_EMBED_URL_PREFIX + rId.getVideoId());
+          System.out.println("[DEBUG] Title: " + video.getSnippet().getTitle());
+        }
       }
     }
   }

@@ -1,5 +1,6 @@
 package edu.brown.cs.group.term_project;
 
+import java.io.IOException;
 import java.util.Map;
 
 import spark.ModelAndView;
@@ -15,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import edu.brown.cs.group.speechtotext.LiveMode;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 
 public class Gui {
@@ -41,6 +43,14 @@ public class Gui {
     }
   }
   
+  private static class RecordHandler implements Route {
+    @Override
+    public Object handle(Request request, Response response) {
+      
+      return null;
+    }
+  }
+  
   private static class YtVideoHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -52,6 +62,14 @@ public class Gui {
         YouTubeSearchRunner.search(searchVal);
         embedUrl = YouTubeSearchRunner.embedUrl();
         resultObject.addProperty("resultUrl", embedUrl);
+      }
+      try {
+        LiveMode lm = new LiveMode();
+        for (String word : lm.getWords()) {
+          System.out.println(word);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
       }
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("resultUrl", resultObject)
