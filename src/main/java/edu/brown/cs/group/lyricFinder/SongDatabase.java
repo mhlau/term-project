@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 public class SongDatabase {
+  private final int SONG_ID_COLUMN = 1;
+  private final int SONG_ARTIST_COLUMN = 2;
+  private final int SONG_TITLE_COLUMN = 3;
+  private final int SONG_LYRICS_COLUMN = 4;
   private final int NUM_THREADS = 4;
   private Connection conn;
   private Map<Integer, Song> idToSongMap;
@@ -135,12 +139,14 @@ public class SongDatabase {
 
       List<Song> songs = new ArrayList<>();
       while (rs.next()) {
-        int songID = rs.getInt(1);
+        int songID = rs.getInt(SONG_ID_COLUMN);
         if (idToSongMap.containsKey(songID)) {
           songs.add(idToSongMap.get(songID));
         } else {
-          List<String> lyrics = Arrays.asList(rs.getString(4).split(" "));
-          Song song = new Song(songID, rs.getString(2), rs.getString(3), lyrics);
+          List<String> lyrics =
+              Arrays.asList(rs.getString(SONG_LYRICS_COLUMN).split(" "));
+          Song song = new Song(songID, rs.getString(SONG_ARTIST_COLUMN),
+                               rs.getString(SONG_TITLE_COLUMN), lyrics);
           idToSongMap.put(songID, song);
           songs.add(song);
         }
