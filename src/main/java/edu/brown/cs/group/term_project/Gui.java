@@ -88,7 +88,7 @@ public class Gui {
       }
       QueryParamsMap qm = request.queryMap();
       String searchVal = qm.value("searchVal");
-      String embedUrl = "";
+      String url = "";
       JsonObject resultObject = new JsonObject();
       if (searchVal != null) {
         List<String> dialogue = new ArrayList<String>();
@@ -100,14 +100,23 @@ public class Gui {
         sc.close();
         List<Song> res = sm.match(dialogue, 5);
         if (res.size() > 0) {
-          YouTubeSearchRunner.search(res.get(0).getTitle()
-           + " " +  res.get(0).getArtist());
+          for (int i = 0; i < res.size(); i++) {
+            YouTubeSearchRunner.search(res.get(i).getTitle()
+                + " " +  res.get(i).getArtist());
+            if (i == 0) {
+              url = YouTubeSearchRunner.embedUrl();
+              resultObject.addProperty("embedUrl", url);
+            } else {
+              url = YouTubeSearchRunner.resultUrl();
+              resultObject.addProperty("resultUrl" + i, url);
+              resultObject.addProperty("resultTitle" + i,
+                  YouTubeSearchRunner.resultTitle());
+            }
+          }
         }
-        embedUrl = YouTubeSearchRunner.embedUrl();
-        resultObject.addProperty("resultUrl", embedUrl);
       }
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("resultUrl", resultObject)
+          .put("result", resultObject)
           .build();
       return GSON.toJson(variables);
     }

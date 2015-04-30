@@ -60,14 +60,22 @@ See how she leans her cheek upon her hand!
 O that I were a glove upon that hand, 
 That I might touch that cheek!
 	">
-   	Romeo and Juliet
-
+   	Romeo and Juliet, 
    	</a>
+    <a href="" 
+    data-text=
+"It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.
+  ">
+    Pride and Prejudice
+    </a>
     </div>
     <br><br>
     <div id="resultVideoDiv">
-    <p id="resultUrl"></p>
-	</div>
+    <p id="embedUrl"></p>
+    <br>
+    <p id="nextResultsText"></p>
+	  </div>
+    <br><br>
 </div>
 </#assign>
 <#include "main.ftl">

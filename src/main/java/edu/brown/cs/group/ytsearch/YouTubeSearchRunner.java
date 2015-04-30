@@ -36,6 +36,7 @@ public class YouTubeSearchRunner {
   private static List<SearchResult> searchResultList;
   private static String resultUrl;
   private static String embedUrl;
+  private static String resultTitle;
 
   /**
    * Private constructor - contains only static methods.
@@ -106,6 +107,7 @@ public class YouTubeSearchRunner {
       if (rId.getKind().equals("youtube#video")) {
         resultUrl = YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId();
         embedUrl = YOUTUBE_EMBED_URL_PREFIX + rId.getVideoId();
+        resultTitle = video.getSnippet().getTitle();
         if (DEBUG) {
           System.out.println("[DEBUG] Result URL: "
             + YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId());
@@ -131,6 +133,14 @@ public class YouTubeSearchRunner {
    */
   public static String embedUrl() {
     return embedUrl;
+  }
+  
+  /**
+   * Accesses the title of the video.
+   * @return The title of the resulting YouTube video.
+   */
+  public static String resultTitle() {
+    return resultTitle;
   }
 
 }

@@ -1,7 +1,8 @@
 var searchButton = document.getElementById("searchButton");
 var recordButton = document.getElementById("recordButton");
 var searchInput = document.getElementById("searchInput");
-var resultUrlText = document.getElementById("resultUrl");
+var embedUrlText = document.getElementById("embedUrl");
+var nextResultsText = document.getElementById("nextResultsText")
 
 var search = function() {
 	var searchVal = searchInput.value;
@@ -10,12 +11,18 @@ var search = function() {
 	};
 	$.post("/result", postParams, function(responseJSON) {
 		response = JSON.parse(responseJSON);
-		resultUrl = response.resultUrl;
-		resultUrlText.innerHTML = 
+		console.log(response);	
+		embedUrl = response.result.embedUrl;
+		embedUrlText.innerHTML = 
 			"<iframe width=\"560\" height=\"315\"src=\"" 
-			+ resultUrl.resultUrl 
+			+ embedUrl 
 			+ "?autoplay=1\"frameborder=\"0\" allowfullscreen></iframe>";
-		console.log(resultUrl);		
+		nextResultsText.innerHTML = 
+			"Wasn't relevant? Try these songs: <br>"
+			+ "<a href=\"" + response.result.resultUrl1 + "\">" + response.result.resultTitle1 + "</a><br>"
+			+ "<a href=\"" + response.result.resultUrl2 + "\">" + response.result.resultTitle2 + "</a><br>"
+			+ "<a href=\"" + response.result.resultUrl3 + "\">" + response.result.resultTitle3 + "</a><br>"
+			+ "<a href=\"" + response.result.resultUrl4 + "\">" + response.result.resultTitle4 + "</a>"; 
 	});
 };
 
