@@ -1,6 +1,8 @@
 package edu.brown.cs.group.matcher;
 import  edu.brown.cs.group.lyricFinder.Song;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Map;
 import java.util.AbstractMap;
 import java.util.HashSet;
@@ -13,62 +15,102 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.io.BufferedReader;
 public class SongSourceDistance {
-  private Map<String,Set<Integer>> topicNumbers;
-  private Map<Song,Map<Integer,Double>> counts;  
-  private Map<Integer, Integer> catCounts;  
-  private Map<Integer, Double> v = null;
+  private Map<String,Set<Short>> topicNumbers;
+  private Map<Song,short[]> countIndices;  
+  private Map<Song,float[]> countValues;  
+  private Map<Short, Integer> catCounts;  
+  private short[] vi = null;
+  private float[] vv = null;
   public SongSourceDistance(BufferedReader in, List<Song> songs) {
-    topicNumbers = new HashMap<String,Set<Integer>>();
-    counts = new HashMap<Song,Map<Integer,Double>>();
-    catCounts = new HashMap<Integer, Integer>();
+    topicNumbers = new HashMap<String,Set<Short>>();
+    countIndices = new HashMap<Song,short[]>();
+    countValues = new HashMap<Song,float[]>();
+    catCounts = new HashMap<Short, Integer>();
     Scanner scn = new Scanner(in);
+    int i = 0;
     while (scn.hasNextLine()) {
+
       Scanner ln = new Scanner(scn.nextLine());
       if (ln. hasNext()) {
         String word = ln.next();
-        Set<Integer> cats = new HashSet<Integer>();
+        Set<Short> cats = new HashSet<Short>();
         while (ln.hasNextInt()) {
-          cats.add(ln.nextInt());
+          cats.add((short)(ln.nextInt() + Short.MIN_VALUE));
         }
         topicNumbers.put(word, cats);
       }
       ln.close();
     }
+    i = 0;
     for (Song song : songs) {
-      counts.put(song, normCounts(song.getLyrics()));
+      Map<Short, Float>  nc = normCounts(song.getLyrics());
+      short[] ind = new short[nc.size()];
+      float[] val = new float[nc.size()];
+      SortedSet<Short> ss = new TreeSet<Short>(nc.keySet());
+      int c = 0;
+      for (short l : ss) {
+        ind[c] = l;
+        val[c] = nc.get(l);
+        c++;
+      }
+ 
+      countIndices.put(song, ind);
+      countValues.put(song, val); 
+      System.out.println(i++);
     }
   }
   public void setDialogue(List<String> dialogue) {
-    v = normCounts(dialogue);
+    Map<Short, Float> v = normCounts(dialogue);
+    vi = new short[v.size()];
+    vv = new float[v.size()];
+      SortedSet<Short> ss = new TreeSet<Short>(v.keySet());
+      int c = 0;
+      for (short l : ss) {
+        vi[c] = l;
+        vv[c] = v.get(l);
+        c++;
+      }
   }
   public double distance(Song s) {
-    return dist(counts.get(s), v);
+    return dist(countIndices.get(s), countValues.get(s), vi, vv);
   }
-  private static double dist(Map<Integer, Double> a, Map<Integer, Double> b) {
-    double ret = 0;
+  private double dist(short [] aInd, float [] aVals, short [] bInd, float [] bVals) {
+
+
+    int aCounter = 0;
+    int bCounter = 0;
     
-    
-    for (Integer r : a.keySet()) {
-      if (b.containsKey(r)) {
-        ret += (a.get(r)-b.get(r))*(a.get(r)-b.get(r));
+    double res = 0;
+    while (aCounter < aInd.length && bCounter < bInd.length) {
+      if (aInd[aCounter] == bInd[bCounter]) {
+        res += (aVals[aCounter] - bVals[bCounter])*(aVals[aCounter] - bVals[bCounter]);
+        aCounter++;
+        bCounter++;
+      } else if (aInd[aCounter] < bInd[bCounter]) {
+        res += aVals[aCounter]*aVals[aCounter];
+        aCounter++;
       } else {
-        ret += a.get(r)*a.get(r);
+        res += bVals[bCounter]*bVals[bCounter];
+        bCounter++;
       }
     }
-    for (Integer r : b.keySet()) {
-      if (!a.containsKey(r)) {
-        ret += b.get(r)*b.get(r);
-      } 
-    }    
-    return ret;
+    while (bCounter < bInd.length) {
+      res += bVals[bCounter]*bVals[bCounter];
+      bCounter++;
+    }
+    while (aCounter < aInd.length) {
+      res += aVals[aCounter]*aVals[aCounter];
+      aCounter++;
+    }
+    return res;
   }
   
   
-  private Map<Integer, Double> normCounts(List<String> words) {
+  private Map<Short, Float> normCounts(List<String> words) {
     catCounts.clear();
     for (String lyr : words) {
       if (topicNumbers.containsKey(lyr)) {
-        for (Integer c : topicNumbers.get(lyr)) {
+        for (Short c : topicNumbers.get(lyr)) {
 
           if (!catCounts.containsKey(c)) {
             catCounts.put(c, 1);
@@ -79,13 +121,13 @@ public class SongSourceDistance {
       }
     }
     
-    Map<Integer, Double> normCatCounts = new HashMap<Integer, Double>();
+    Map<Short, Float> normCatCounts = new HashMap<Short, Float>();
     int tot = 0;
     for (Integer i : catCounts.values()) {
       tot += i*i;
     }
-    double norm = Math.sqrt(tot);
-    for (Map.Entry<Integer, Integer> kv : catCounts.entrySet()) {
+    float norm = (float) Math.sqrt(tot);
+    for (Map.Entry<Short, Integer> kv : catCounts.entrySet()) {
       normCatCounts.put(kv.getKey(), kv.getValue()/norm);
     }    
     return normCatCounts;

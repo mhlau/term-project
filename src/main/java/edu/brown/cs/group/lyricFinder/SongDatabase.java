@@ -13,45 +13,13 @@ import java.util.List;
 import java.util.Map;
 
 public class SongDatabase {
+  private final int SONG_ID_COLUMN = 1;
+  private final int SONG_ARTIST_COLUMN = 2;
+  private final int SONG_TITLE_COLUMN = 3;
+  private final int SONG_LYRICS_COLUMN = 4;
   private final int NUM_THREADS = 4;
   private Connection conn;
   private Map<Integer, Song> idToSongMap;
-  
-  /*
-  // Just for testing stuff
-  public static void main(String args[]) {
-    String testString = "Pink Floyd - See Emily Play Lyrics | SongMeanings";
-    
-    String[] test1 = testString.split(" - ");
-    System.out.println("test1");
-    for (String s : test1) {
-      System.out.println(s);
-    }
-    System.out.println();
-    
-    String[] test2 = testString.split(" Lyrics | SongMeanings");
-    System.out.println("test2");
-    for (String s : test2) {
-      System.out.println(s);
-    }
-    System.out.println();
-    
-    String replacement = testString.replace(" Lyrics | SongMeanings", "");
-    String[] test3 = replacement.split(" - ");
-    System.out.println("test3");
-    for (String s : test3) {
-      System.out.println(s);
-    }
-    
-    String testLyrics = "What I've kept with me And what I've thrown away And where the hell I've ended up On this glory random day Were the things I really cared about Just left along the way For being too pent up and proud Woke up way too late Feeling hung over and old And the sun was shining bright And I walked barefoot down the road Started thing about my old man It seems that all men Want to get into a car and go anywhere? Here I stand, Sad and free I can't cry and I can't see What I've done God, what have I done So don't you know I'm numb, man No I don't feel a thing at all Cause its all smiles and business these days And I am indifferent to the loss I've faith that there's a soul Whose leading me around I wonder if she knows Which way is down I poured my heart out I poured my heart out It evaporated, see? Blind man on a canyon's edge Of a Panoramic scene Or maybe I'm a kite That's flying high & random Dangling a string Or slumped over in a vacant room Head on a stranger's knee I'm sure back home They think I've lost my mind.";
-    String words = testLyrics.replaceAll("[^a-zA-Z ]", "").toLowerCase();
-    System.out.println(words);
-    String[] wordsSplit = words.split("\\s+");
-    for (String s : wordsSplit) {
-      System.out.println(s);
-    }
-  }
-  */
   
   public SongDatabase(String db, int songsToGetIfRebuild) throws ClassNotFoundException {
     Class.forName("org.sqlite.JDBC");
@@ -64,13 +32,9 @@ public class SongDatabase {
         buildDatabase(songsToGetIfRebuild);
       }
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      System.out.println(e.getErrorCode());
-      System.out.println(e.getSQLState());
-      e.printStackTrace();
+      System.err.println("ERROR: SQLException when connecting to database or while building it.");
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      System.err.println("ERROR: InterruptedException while building database.");
     }
 
     this.idToSongMap = new HashMap<>();
@@ -88,8 +52,7 @@ public class SongDatabase {
       }
       return true;
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      System.err.println("ERROR: SQLException when checking if database should be built.");
       return false;
     }
   }
@@ -118,7 +81,7 @@ public class SongDatabase {
     }
     long endTime = System.currentTimeMillis();
     long totalTime = endTime - startTime;
-    System.out.println("Database built. Took " + totalTime + " ms");
+    System.out.println("Database built. Took " + totalTime + " milliseconds");
   }
 
   private void buildTable(String schema) throws SQLException {
@@ -157,8 +120,7 @@ public class SongDatabase {
       idToSongMap.put(id, song);
       return song;
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      System.err.println("ERROR: SQLException when getting song with ID " + id + ".");
       return null;
     }
   }
@@ -177,12 +139,14 @@ public class SongDatabase {
 
       List<Song> songs = new ArrayList<>();
       while (rs.next()) {
-        int songID = rs.getInt(1);
+        int songID = rs.getInt(SONG_ID_COLUMN);
         if (idToSongMap.containsKey(songID)) {
           songs.add(idToSongMap.get(songID));
         } else {
-          List<String> lyrics = Arrays.asList(rs.getString(4).split(" "));
-          Song song = new Song(songID, rs.getString(2), rs.getString(3), lyrics);
+          List<String> lyrics =
+              Arrays.asList(rs.getString(SONG_LYRICS_COLUMN).split(" "));
+          Song song = new Song(songID, rs.getString(SONG_ARTIST_COLUMN),
+                               rs.getString(SONG_TITLE_COLUMN), lyrics);
           idToSongMap.put(songID, song);
           songs.add(song);
         }
@@ -191,8 +155,7 @@ public class SongDatabase {
 
       return songs;
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      System.err.println("ERROR: SQLException when getting all songs.");
       return null;
     }
   }

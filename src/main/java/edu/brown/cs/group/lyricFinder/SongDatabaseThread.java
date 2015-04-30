@@ -31,6 +31,10 @@ public class SongDatabaseThread extends Thread {
     try (PreparedStatement ps = conn.prepareStatement(insert)) {
       
       for (int id = start; id < end; id++) {
+        if (id % 100 == 0) {
+          System.out.println("Thread " + start + "-" + end + "is on song " + id);
+        }
+
         try {
           Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
           String pageTitle = doc.title();
@@ -45,13 +49,7 @@ public class SongDatabaseThread extends Thread {
           for (Element l : lyrics) {
             String s = l.text().replace(" Edit Lyrics Edit Wiki Add Video", "");
             String noPunc = s.replaceAll("[^a-zA-Z ]", "").toLowerCase();
-            /*
-            System.out.println("id: " + id);
-            System.out.println("artist: " + split[0]);
-            System.out.println("title: " + split[1]);
-            System.out.println("lyrics: " + s);
-            System.out.println();
-            */
+
             ps.setInt(1, id);
             ps.setString(2, split[0]);
             ps.setString(3, split[1]);
@@ -67,11 +65,11 @@ public class SongDatabaseThread extends Thread {
       ps.executeBatch();
       ps.close();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      System.err.println("ERROR: IOException in thread " + start + "-" + end);
+      return;
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      System.err.println("ERROR: SQLException in thread " + start + "-" + end);
+      return;
     }
     
     System.out.println("Thread " + start + "-" + end + " finished.");
