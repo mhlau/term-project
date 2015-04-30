@@ -12,16 +12,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *
+ * @author cmg1
+ *
+ */
 public class SongDatabase {
-  private final int SONG_ID_COLUMN = 1;
-  private final int SONG_ARTIST_COLUMN = 2;
-  private final int SONG_TITLE_COLUMN = 3;
-  private final int SONG_LYRICS_COLUMN = 4;
-  private final int NUM_THREADS = 4;
+  static final int SONG_ID_COLUMN = 1;
+  static final int SONG_ARTIST_COLUMN = 2;
+  static final int SONG_TITLE_COLUMN = 3;
+  static final int SONG_LYRICS_COLUMN = 4;
+  private static final int NUM_THREADS = 4;
   private Connection conn;
   private Map<Integer, Song> idToSongMap;
-  
-  public SongDatabase(String db, int songsToGetIfRebuild) throws ClassNotFoundException {
+
+  /**
+   *
+   * @param db .
+   * @param songsToGetIfRebuild .
+   * @throws ClassNotFoundException .
+   */
+  public SongDatabase(String db, int songsToGetIfRebuild)
+    throws ClassNotFoundException {
     Class.forName("org.sqlite.JDBC");
     String urlToDB = "jdbc:sqlite:" + db;
 
@@ -32,9 +44,11 @@ public class SongDatabase {
         buildDatabase(songsToGetIfRebuild);
       }
     } catch (SQLException e) {
-      System.err.println("ERROR: SQLException when connecting to database or while building it.");
+      System.err.println("ERROR: "
+        + "SQLException when connecting to database or while building it.");
     } catch (InterruptedException e) {
-      System.err.println("ERROR: InterruptedException while building database.");
+      System.err.println("ERROR: "
+        + "InterruptedException while building database.");
     }
 
     this.idToSongMap = new HashMap<>();
@@ -46,22 +60,28 @@ public class SongDatabase {
       md = conn.getMetaData();
       ResultSet rs = md.getTables(null, null, "%", null);
       while (rs.next()) {
-        if (rs.getString(3).equals("song")) {
+        if (rs.getString(SONG_TITLE_COLUMN).equals("song")) {
           return false;
         }
       }
       return true;
     } catch (SQLException e) {
-      System.err.println("ERROR: SQLException when checking if database should be built.");
+      System.err.println("ERROR: "
+        + "SQLException when checking if database should be built.");
       return false;
     }
   }
 
-  private void buildDatabase(int numSongs) throws SQLException, InterruptedException {
+  private void buildDatabase(int numSongs)
+    throws SQLException, InterruptedException {
     System.out.println("Building database...");
-    String schema = "CREATE TABLE song(id INT PRIMARY KEY, artist TEXT, title TEXT, lyrics TEXT);";
+    String schema =
+      "CREATE TABLE song(id INT PRIMARY KEY, "
+                      + "artist TEXT, "
+                      + "title TEXT, "
+                      + "lyrics TEXT);";
     buildTable(schema);
-    
+
     SongDatabaseThread[] sd = new SongDatabaseThread[NUM_THREADS];
 
     int start = 1;
@@ -74,11 +94,14 @@ public class SongDatabase {
       start = end;
       end += songsPerThread;
     }
+
     long startTime = System.currentTimeMillis();
+
     System.out.println("Threads started, now waiting to join...");
     for (SongDatabaseThread sdt : sd) {
       sdt.join();
     }
+
     long endTime = System.currentTimeMillis();
     long totalTime = endTime - startTime;
     System.out.println("Database built. Took " + totalTime + " milliseconds");
@@ -91,9 +114,9 @@ public class SongDatabase {
   }
 
   /**
-   * 
-   * @param id
-   * @return
+   *
+   * @param id .
+   * @return .
    */
   public Song getSong(int id) {
     if (idToSongMap.containsKey(id)) {
@@ -112,22 +135,27 @@ public class SongDatabase {
       Song song = null;
       if (rs.next()) {
         // create song
-        List<String> lyrics = Arrays.asList(rs.getString(4).split(" "));
-        song = new Song(rs.getInt(1), rs.getString(2), rs.getString(3), lyrics);
+        List<String> lyrics =
+            Arrays.asList(rs.getString(SONG_LYRICS_COLUMN).split(" "));
+        song = new Song(rs.getInt(SONG_ID_COLUMN),
+                        rs.getString(SONG_ARTIST_COLUMN),
+                        rs.getString(SONG_TITLE_COLUMN),
+                        lyrics);
       }
       rs.close();
 
       idToSongMap.put(id, song);
       return song;
     } catch (SQLException e) {
-      System.err.println("ERROR: SQLException when getting song with ID " + id + ".");
+      System.err.println("ERROR: "
+        + "SQLException when getting song with ID " + id + ".");
       return null;
     }
   }
 
   /**
-   * 
-   * @return
+   *
+   * @return .
    */
   public List<Song> getAllSongs() {
     String query = "SELECT * FROM song;";
