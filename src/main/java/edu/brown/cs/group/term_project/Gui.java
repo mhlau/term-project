@@ -103,15 +103,12 @@ public class Gui {
           for (int i = 0; i < res.size(); i++) {
             YouTubeSearchRunner.search(res.get(i).getTitle()
                 + " " +  res.get(i).getArtist());
-            if (i == 0) {
-              url = YouTubeSearchRunner.embedUrl();
-              resultObject.addProperty("embedUrl", url);
-            } else {
-              url = YouTubeSearchRunner.resultUrl();
-              resultObject.addProperty("resultUrl" + i, url);
-              resultObject.addProperty("resultTitle" + i,
-                  YouTubeSearchRunner.resultTitle());
-            }
+     
+            url = YouTubeSearchRunner.embedUrl();
+            resultObject.addProperty("resultUrl" + i, url);
+            resultObject.addProperty("resultTitle" + i,
+                YouTubeSearchRunner.resultTitle());
+            
           }
         }
       }
