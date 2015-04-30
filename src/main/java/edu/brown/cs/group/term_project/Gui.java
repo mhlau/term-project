@@ -1,6 +1,8 @@
 package edu.brown.cs.group.term_project;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,7 @@ public class Gui {
     Spark.get("/", new InitialLoadHandler(), new FreeMarkerEngine());
     Spark.post("/result", new YtVideoHandler());
     Spark.post("/record", new RecordHandler());
+    Spark.post("/download", new DownloadHandler());
   }
   
   private static class InitialLoadHandler implements TemplateViewRoute {
@@ -120,6 +123,25 @@ public class Gui {
           .build();
       return GSON.toJson(variables);
     }
+  }
+  
+  private static class DownloadHandler implements Route {
+    @Override
+    public Object handle(Request request, Response response) {
+      QueryParamsMap qm = request.queryMap();
+      String[] commands = {"python", "youtube-dl/downloadAudio.py", null};
+      String s;
+      try {
+        Process p = Runtime.getRuntime().exec(commands);
+        BufferedReader stdInput = new BufferedReader(
+            new InputStreamReader(p.getInputStream()));
+        
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
+      return null;
+    }    
   }
   
 }

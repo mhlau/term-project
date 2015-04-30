@@ -65,6 +65,9 @@ That I might touch that cheek!
     <div id="resultVideoDiv">
     <p id="embedUrl"></p>
     <br>
+    <div style="text-align: center">
+    <button type="button" class="btn btn-info btn-lg" id="downloadButton" style="font: bold 18px Arial">Download this Song</button>
+    </div>
     <p id="nextResultsText"></p>
 	  </div>
     <br><br>

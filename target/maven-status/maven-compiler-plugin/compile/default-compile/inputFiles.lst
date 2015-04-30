@@ -13,10 +13,12 @@
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/ytsearch/package-info.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/LiveMode.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/term_project/Main.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/matcher/package-info.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/lyricFinder/package-info.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/lyricFinder/SongDatabase.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/matcher/WordSource.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/matcher/TopicMatcher.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/matcher/BooleanWordSource.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/SpokenWord.java
+/gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/package-info.java
 /gpfs/main/home/mhlau/course/cs032/term-project/src/main/java/edu/brown/cs/group/speechtotext/SpeechToText.java
