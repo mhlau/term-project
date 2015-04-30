@@ -55,8 +55,7 @@ public class SongSourceDistance {
       }
  
       countIndices.put(song, ind);
-      countValues.put(song, val); 
-      System.out.println(i++);
+      countValues.put(song, val);
     }
   }
   public void setDialogue(List<String> dialogue) {
