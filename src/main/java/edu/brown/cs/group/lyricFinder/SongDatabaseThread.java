@@ -12,10 +12,22 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ *
+ * @author cmg1
+ *
+ */
 public class SongDatabaseThread extends Thread {
+  private static final int REPORT_PROGRESS = 100;
   private Connection conn;
   private int start, end;
-  
+
+  /**
+   *
+   * @param conn .
+   * @param start .
+   * @param end .
+   */
   public SongDatabaseThread(Connection conn, int start, int end) {
     this.conn = conn;
     this.start = start;
@@ -29,20 +41,23 @@ public class SongDatabaseThread extends Thread {
     String insert = "INSERT INTO song VALUES(?,?,?,?);";
 
     try (PreparedStatement ps = conn.prepareStatement(insert)) {
-      
+
       for (int id = start; id < end; id++) {
-        if (id % 100 == 0) {
-          System.out.println("Thread " + start + "-" + end + "is on song " + id);
+        if (id % REPORT_PROGRESS == 0) {
+          System.out.println("Thread " + start + "-" + end
+                           + "is on song " + id);
         }
 
         try {
-          Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
+          Document doc =
+            Jsoup.connect("http://songmeanings.com/songs/view/" + id).get();
           String pageTitle = doc.title();
           if (pageTitle.equals("Error retrieving lyric")) {
             continue;
           }
 
-          String artistAndTitle = pageTitle.replace(" Lyrics | SongMeanings", "");
+          String artistAndTitle =
+            pageTitle.replace(" Lyrics | SongMeanings", "");
           String[] split = artistAndTitle.split(" - ");
 
           Elements lyrics = doc.body().getElementsByClass("lyric-box");
@@ -50,10 +65,10 @@ public class SongDatabaseThread extends Thread {
             String s = l.text().replace(" Edit Lyrics Edit Wiki Add Video", "");
             String noPunc = s.replaceAll("[^a-zA-Z ]", "").toLowerCase();
 
-            ps.setInt(1, id);
-            ps.setString(2, split[0]);
-            ps.setString(3, split[1]);
-            ps.setString(4, noPunc);
+            ps.setInt(SongDatabase.SONG_ID_COLUMN, id);
+            ps.setString(SongDatabase.SONG_ARTIST_COLUMN, split[0]);
+            ps.setString(SongDatabase.SONG_TITLE_COLUMN, split[1]);
+            ps.setString(SongDatabase.SONG_LYRICS_COLUMN, noPunc);
 
             ps.addBatch();
           }
@@ -71,7 +86,7 @@ public class SongDatabaseThread extends Thread {
       System.err.println("ERROR: SQLException in thread " + start + "-" + end);
       return;
     }
-    
+
     System.out.println("Thread " + start + "-" + end + " finished.");
   }
 }
