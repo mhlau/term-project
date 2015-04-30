@@ -26,5 +26,10 @@ var record = function() {
 	});
 };
 
+$("a[data-text]").click(function(){
+  $("#searchInput").val($(this).attr("data-text"))
+  return false;
+})
+
 searchButton.onclick = search;
 recordButton.onclick = record;
