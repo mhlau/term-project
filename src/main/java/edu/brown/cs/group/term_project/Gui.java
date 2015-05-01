@@ -94,6 +94,7 @@ public class Gui {
       String url = "";
       JsonObject resultObject = new JsonObject();
       if (searchVal != null) {
+        // Perform matching from input text to song name/artist.
         List<String> dialogue = new ArrayList<String>();
         Scanner sc = new Scanner(searchVal);
         sc.useDelimiter("[^a-zA-Z]");
@@ -102,19 +103,15 @@ public class Gui {
         }
         sc.close();
         List<Song> res = sm.match(dialogue, 5);
+        // Search Youtube for URLs corresponding to the top 5 matches.
         if (res.size() > 0) {
           for (int i = 0; i < res.size(); i++) {
             YouTubeSearchRunner.search(res.get(i).getTitle()
                 + " " +  res.get(i).getArtist());
-            if (i == 0) {
-              url = YouTubeSearchRunner.embedUrl();
-              resultObject.addProperty("embedUrl", url);
-            } else {
-              url = YouTubeSearchRunner.resultUrl();
-              resultObject.addProperty("resultUrl" + i, url);
-              resultObject.addProperty("resultTitle" + i,
-                  YouTubeSearchRunner.resultTitle());
-            }
+            url = YouTubeSearchRunner.embedUrl();
+            resultObject.addProperty("resultUrl" + i, url);
+            resultObject.addProperty("resultTitle" + i,
+                YouTubeSearchRunner.resultTitle());
           }
         }
       }
@@ -129,18 +126,33 @@ public class Gui {
     @Override
     public Object handle(Request request, Response response) {
       QueryParamsMap qm = request.queryMap();
-      String[] commands = {"python", "youtube-dl/downloadAudio.py", null};
+      String resultUrl = qm.value("currentResults");
+      String[] commands = {"python", "youtube-dl/downloadAudio.py", resultUrl};
       String s;
       try {
         Process p = Runtime.getRuntime().exec(commands);
         BufferedReader stdInput = new BufferedReader(
             new InputStreamReader(p.getInputStream()));
-        
+        BufferedReader stdError = new BufferedReader(
+            new InputStreamReader(p.getErrorStream()));
+        if (DEBUG) {
+          System.out.println("[DEBUG] Standard output of youtube-dl:");
+          while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+          }
+          System.out.println("[DEBUG] Standard error of youtube-dl:");
+          while ((s = stdError.readLine()) != null) {
+            System.out.println("[DEBUG] " + s);
+          }
+        }
       } catch (IOException e) {
         e.printStackTrace();
         System.exit(1);
       }
-      return null;
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("success", true)
+          .build();
+      return GSON.toJson(variables);
     }    
   }
   

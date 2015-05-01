@@ -28,7 +28,7 @@ textarea {
 
 #downloadButton {
 	margin: 0 auto;
-	display: inline-block;
+	display: none;
 	position: relative;
 }
 
