@@ -1,6 +1,5 @@
 package edu.brown.cs.group.ytsearch;
 
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
@@ -22,13 +21,13 @@ import com.google.api.services.youtube.model.SearchResult;
  * @author Micah Lau (mhlau)
  *
  */
-public class YouTubeSearchRunner {
+public final class YouTubeSearchRunner {
 
   private static final String PROPERTIES_FILEPATH =
       "src/main/java/edu/brown/cs/group/ytsearch/youtube.properties";
   private static final String YOUTUBE_VIDEO_URL_PREFIX =
       "https://www.youtube.com/watch?v=";
-  private static final String YOUTUBE_EMBED_URL_PREFIX = 
+  private static final String YOUTUBE_EMBED_URL_PREFIX =
       "https://www.youtube.com/embed/";
   private static final long NUM_VIDEOS_RETURNED = 1;
   private static final boolean DEBUG = true;
@@ -66,9 +65,9 @@ public class YouTubeSearchRunner {
           new NetHttpTransport(),
           new JacksonFactory(),
           new HttpRequestInitializer() {
-              @Override
-              public void initialize(HttpRequest request) throws IOException {
-              }
+            @Override
+            public void initialize(HttpRequest request) throws IOException {
+            }
           })
           .setApplicationName("youtube-cmdline-search")
           .build();
@@ -111,14 +110,14 @@ public class YouTubeSearchRunner {
         if (DEBUG) {
           System.out.println("[DEBUG] Result URL: "
             + YOUTUBE_VIDEO_URL_PREFIX + rId.getVideoId());
-          System.out.println("[DEBUG] Embed URL: " 
+          System.out.println("[DEBUG] Embed URL: "
             + YOUTUBE_EMBED_URL_PREFIX + rId.getVideoId());
           System.out.println("[DEBUG] Title: " + video.getSnippet().getTitle());
         }
       }
     }
   }
-  
+
   /**
    * Accesses the URL of the top video in the search.
    * @return The YouTube video URL.
@@ -126,7 +125,7 @@ public class YouTubeSearchRunner {
   public static String resultUrl() {
     return resultUrl;
   }
-  
+
   /**
    * Accesses the YouTube URL for embedding purposes.
    * @return The YouTube embed URL.
@@ -134,7 +133,7 @@ public class YouTubeSearchRunner {
   public static String embedUrl() {
     return embedUrl;
   }
-  
+
   /**
    * Accesses the title of the video.
    * @return The title of the resulting YouTube video.
@@ -142,5 +141,4 @@ public class YouTubeSearchRunner {
   public static String resultTitle() {
     return resultTitle;
   }
-
 }

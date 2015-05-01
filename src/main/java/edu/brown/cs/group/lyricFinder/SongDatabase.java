@@ -108,9 +108,9 @@ public class SongDatabase {
   }
 
   private void buildTable(String schema) throws SQLException {
-    PreparedStatement prep = conn.prepareStatement(schema);
-    prep.executeUpdate();
-    prep.close();
+    try (PreparedStatement prep = conn.prepareStatement(schema)) {
+      prep.executeUpdate();
+    }
   }
 
   /**
@@ -125,9 +125,7 @@ public class SongDatabase {
 
     String query = "SELECT * FROM song WHERE id=?;";
 
-    PreparedStatement ps;
-    try {
-      ps = conn.prepareStatement(query);
+    try (PreparedStatement ps = conn.prepareStatement(query)) {
       ps.setInt(1, id);
 
       ResultSet rs = ps.executeQuery();
@@ -160,9 +158,7 @@ public class SongDatabase {
   public List<Song> getAllSongs() {
     String query = "SELECT * FROM song;";
 
-    PreparedStatement ps;
-    try {
-      ps = conn.prepareStatement(query);
+    try (PreparedStatement ps = conn.prepareStatement(query)) {
       ResultSet rs = ps.executeQuery();
 
       List<Song> songs = new ArrayList<>();
@@ -179,8 +175,8 @@ public class SongDatabase {
           songs.add(song);
         }
       }
-      rs.close();
 
+      rs.close();
       return songs;
     } catch (SQLException e) {
       System.err.println("ERROR: SQLException when getting all songs.");
