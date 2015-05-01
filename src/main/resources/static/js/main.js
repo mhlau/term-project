@@ -68,10 +68,15 @@ var search = function() {
 	});
 };
 
-var record = function() {
+var record = function() {;
 	$.post("/record", null, function(responseJSON) {
+		console.log(responseJSON);
 		response = JSON.parse(responseJSON);
-		console.log(response.word)
+		newWords = response.words;
+		for (var i = 0; i < newWords.length; i++){
+			searchInput.value = searchInput.value + newWords[i] + " ";
+		}
+		record();
 	});
 };
 
