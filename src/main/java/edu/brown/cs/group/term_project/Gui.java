@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Scanner;
 
 import spark.ModelAndView;
@@ -24,6 +26,7 @@ import com.google.gson.JsonObject;
 
 import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.speechtotext.LiveMode;
+import edu.brown.cs.group.speechtotext.SpeechThread;
 import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 
@@ -33,8 +36,10 @@ public class Gui {
   private static final boolean DEBUG = true;
   private static final Gson GSON = new Gson(); 
   private static final int PORT = 5235;
+  public static SpeechThread speechThread = null;
+  public static Queue<String> words = new LinkedList<>();
 
-  public Gui(SongMatcher sm) {
+  public Gui(SongMatcher sm) throws IOException {
     Gui.sm = sm;
     runSparkServer();
   }
@@ -64,22 +69,41 @@ public class Gui {
       if (DEBUG) {
         System.out.println("[DEBUG] Recording.");
       }
-      LiveMode lm;
-      JsonArray resultArray = new JsonArray();
+      
+      System.out.println("start record handler");
+      
+      List<String> newWords = null;
+      
       try {
-        lm = new LiveMode();
-        for (String word : lm.getWords()) {
-          JsonObject wordObject = new JsonObject();
-          wordObject.addProperty("word", word);
-          resultArray.add(wordObject);
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    	  if (speechThread == null){
+	    	  speechThread = new SpeechThread();
+	    	  speechThread.start();
+    	  }
+		  Thread.sleep(2000);
+	      newWords = speechThread.getWords();
+	  } catch (InterruptedException e) {
+		  e.printStackTrace();
+	  } catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+      
+//      LiveMode lm;
+//      JsonArray resultArray = new JsonArray();
+//      try {
+//        lm = new LiveMode();
+//        for (String word : lm.getWords()) {
+//          JsonObject wordObject = new JsonObject();
+//          wordObject.addProperty("word", word);
+//          resultArray.add(wordObject);
+//        }
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      }
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("words", resultArray)
+          .put("words", newWords)
           .build();
-      return variables;
+      return GSON.toJson(variables);
     }
   }
   

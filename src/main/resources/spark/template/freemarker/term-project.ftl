@@ -9,6 +9,7 @@
     <br>
     <div style="text-align: center">
     <button type="button" class="btn btn-info btn-lg" id="recordButton" style="font: bold 18px Arial">Begin Recording</button>
+    <button type="button" class="btn btn-info btn-lg" id="stopButton" style="font: bold 18px Arial">Stop Recording</button>
     <button type="button" class="btn btn-info btn-lg" id="searchButton" style="font: bold 18px Arial">Search from Text</button>
     </div>
     <br>
@@ -24,6 +25,22 @@
 "As we see that every city is a society, and every society Ed. is established for some good purpose; for an apparent [Bekker 1252a] good is the spring of all human actions; it is evident that this is the principle upon which they are every one founded, and this is more especially true of that which has for its object the best possible, and is itself the most excellent, and comprehends all the rest. Now this is called a city, and the society thereof a political society; for those who think that the principles of a political, a regal, a family, and a herile government are the same are mistaken, while they suppose that each of these differ in the numbers to whom their power extends, but not in their constitution: so that with them a herile government is one composed of a very few, a domestic of more, a civil and a regal of still more, as if there was no difference between a large family and a small city, or that a regal government and a political one are the same, only that in the one a single person is continually at the head of public affairs; in the other, that each member of the state has in his turn a share in the government, and is at one time a magistrate, at another a private person, according to the rules of political science. But now this is not true, as will be evident to any one who will consider this question in the most approved method. As, in an inquiry into every other subject, it is necessary to separate the different parts of which it is compounded, till we arrive at their first elements, which are the most minute parts thereof; so by the same proceeding we shall acquire a knowledge of the primary parts of a city and see wherein they differ from each other, and whether the rules of art will give us any assistance in examining into each of these things which are mentioned."
    	>
    	A Treatise on Government, 
+</a>
+   	<a href="" 
+   	data-text=
+"Get thee to a nunnery: why wouldst thou be a
+breeder of sinners? I am myself indifferent honest;
+but yet I could accuse me of such things that it
+were better my mother had not borne me: I am very
+proud, revengeful, ambitious, with more offences at
+my beck than I have thoughts to put them in,
+imagination to give them shape, or time to act them
+in. What should such fellows as I do crawling
+between earth and heaven? We are arrant knaves,
+all; believe none of us. Go thy ways to a nunnery.
+Where's your father?"
+   	>
+   	Hamlet, 
    	</a> 
    	<a href="" 
    	data-text=

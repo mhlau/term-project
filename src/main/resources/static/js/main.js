@@ -1,5 +1,6 @@
 var searchButton = document.getElementById("searchButton");
 var recordButton = document.getElementById("recordButton");
+var stopButton = document.getElementById("stopButton");
 var searchInput = document.getElementById("searchInput");
 var embedUrlText = document.getElementById("embedUrl");
 var nextResultsText = document.getElementById("nextResultsText")
@@ -75,17 +76,23 @@ var search = function() {
 };
 
 var record = function() {
-	if (!listening) {
+	searchInput.value = "";
+	listening = true;
+	while (listening) {
 		$.post("/record", null, function(responseJSON) {
+			console.log(responseJSON);
 			response = JSON.parse(responseJSON);
-			console.log(response.word)
+			newWords = response.words;
+			for (var i = 0; i < newWords.length; i++){
+				searchInput.value = searchInput.value + newWords[i] + " ";
+			}
 		});
-		listening = true;
-	} else {
-		listening = false;
 	}
-	console.log(listening)
 };
+
+var stopListening = function() {
+	listening = false;
+}
 
 var download = function() {
 	var postParams = {
@@ -104,3 +111,4 @@ $("a[data-text]").click(function(){
 searchButton.onclick = search;
 recordButton.onclick = record;
 downloadButton.onclick = download;
+stopButton.onclick = stopListening;

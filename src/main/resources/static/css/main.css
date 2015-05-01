@@ -32,6 +32,12 @@ textarea {
 	position: relative;
 }
 
+#stopButton {
+	margin: 0 auto;
+	display: none;
+	position: relative;
+}
+
 #resultUrl {
 	display: block;
 	margin-left: auto;

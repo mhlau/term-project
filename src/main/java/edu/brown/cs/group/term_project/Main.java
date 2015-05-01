@@ -9,13 +9,21 @@ import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.matcher.SongSourceDistance;
 import edu.brown.cs.group.matcher.TwoSourceMatcher;
 
+/**
+ *
+ */
 public final class Main {
 
   private Main() {
 
   }
 
-  public static void main(String[] args) throws Exception { 
+  /**
+   *
+   * @param args .
+   * @throws Exception .
+   */
+  public static void main(String[] args) throws Exception {
     SongDatabase db = new SongDatabase(args[0], 15);
     List<Song> allSongs = db.getAllSongs();
     SongMatcher sm = new TwoSourceMatcher(
