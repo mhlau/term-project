@@ -1,8 +1,6 @@
 package edu.brown.cs.group.term_project;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +35,7 @@ import edu.brown.cs.group.speechtotext.SpeechThread;
 import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 
-public class Gui {
+public class Gui2 {
   
   private static SongMatcher sm; 
   private static List<String> bufferedRequests;
@@ -45,16 +43,11 @@ public class Gui {
   private static final boolean DEBUG = true;
   private static final Gson GSON = new Gson(); 
   private static final int PORT = 5235;
-
-  private static Visualizer vis;
-
   public static SpeechThread speechThread = null;
-
   public static Queue<String> words = new LinkedList<>();
 
-  public Gui(SongMatcher sm) throws IOException {
-    Gui.sm = sm;
-    vis = new Visualizer();
+  public Gui2(SongMatcher sm) throws IOException {
+    Gui2.sm = sm;
     bufferedRequests = new ArrayList<String>();
     bufferedResponses = new ArrayList<JsonObject>();    
     runSparkServer();
@@ -65,10 +58,9 @@ public class Gui {
     Spark.setPort(PORT);
     Spark.externalStaticFileLocation("src/main/resources/static");
     Spark.get("/", new InitialLoadHandler(), freeMarker);
-    Spark.post("/result", new YtVideoHandler());
+    //Spark.post("/result", new YtVideoHandler());
+    Spark.get("/result", new YtVideoHandler(), freeMarker);
     Spark.post("/record", new RecordHandler());
-    Spark.post("/visualize", new VisHandler());
-    Spark.post("/download", new DownloadHandler());
     Spark.get("/:id", new ReloadHandler(), freeMarker);   
   }
   
@@ -126,6 +118,8 @@ public class Gui {
         System.out.println("[DEBUG] Recording.");
       }
       
+      System.out.println("start record handler");
+      
       List<String> newWords = null;
       
       try {
@@ -162,12 +156,12 @@ public class Gui {
     }
   }
   
-  private static class YtVideoHandler implements Route {
+  private static class YtVideoHandler implements TemplateViewRoute {
     @Override
-    public Object handle(Request request, Response response) {
-      if (DEBUG) {
+    public ModelAndView handle(Request request, Response response) {
+      //if (DEBUG) {
         System.out.println("[DEBUG] Youtube search being processed.");
-      }
+      //}
       QueryParamsMap qm = request.queryMap();
       String searchVal = qm.value("searchVal");
       String url = "";
@@ -178,7 +172,6 @@ public class Gui {
       JsonArray resultLyrics = new JsonArray();
       
       if (searchVal != null) {
-        // Perform matching from input text to song name/artist.
         List<String> dialogue = new ArrayList<String>();
         Scanner sc = new Scanner(searchVal);
         sc.useDelimiter("[^a-zA-Z]");
@@ -187,13 +180,15 @@ public class Gui {
         }
         sc.close();
         List<Song> res = sm.match(dialogue, 5);
-        // Search Youtube for URLs corresponding to the top 5 matches.
+	
         if (res.size() > 0) {
 
           for (int i = 0; i < res.size(); i++) {
             YouTubeSearchRunner.search(res.get(i).getTitle()
                 + " " +  res.get(i).getArtist());
+     
             url = YouTubeSearchRunner.embedUrl();
+
             resultUrl.add(new JsonPrimitive(url));
             resultTitle.add(new JsonPrimitive(YouTubeSearchRunner.resultTitle()));
             resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
@@ -206,10 +201,14 @@ public class Gui {
       resultObject.add("saveId", new JsonPrimitive(""+bufferedRequests.size()));
       bufferedRequests.add(searchVal);
       bufferedResponses.add(resultObject);
+      
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("result", resultObject)
+          .put("title", "CS032 Term Project")
+          .put("oldResults", "")
+          .put("resultsOrdering", "")
+          .put("result", GSON.toJson(resultObject))
           .build();
-      return GSON.toJson(variables);
+      return new ModelAndView(variables, "results.ftl");
     }
 
     private String getLyricsHTML(int songID) {
@@ -227,58 +226,6 @@ public class Gui {
         return "";
       }
     }
-  }
-  
-
-  
-  
-  private static class VisHandler implements Route {
-    @Override
-    public Object handle(Request request, Response response) {
-
-      
-
-      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("level", vis.getWord())
-          .build();
-      return GSON.toJson(variables);
-    }
-
-  }
-
-  private static class DownloadHandler implements Route {
-    @Override
-    public Object handle(Request request, Response response) {
-      QueryParamsMap qm = request.queryMap();
-      String resultUrl = qm.value("currentResults");
-      String[] commands = {"python", "youtube-dl/downloadAudio.py", resultUrl};
-      String s;
-      try {
-        Process p = Runtime.getRuntime().exec(commands);
-        BufferedReader stdInput = new BufferedReader(
-            new InputStreamReader(p.getInputStream()));
-        BufferedReader stdError = new BufferedReader(
-            new InputStreamReader(p.getErrorStream()));
-        if (DEBUG) {
-          System.out.println("[DEBUG] Standard output of youtube-dl:");
-          while ((s = stdInput.readLine()) != null) {
-            System.out.println(s);
-          }
-          System.out.println("[DEBUG] Standard error of youtube-dl:");
-          while ((s = stdError.readLine()) != null) {
-            System.out.println("[DEBUG] " + s);
-          }
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-        System.exit(1);
-      }
-      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("success", true)
-          .build();
-      return GSON.toJson(variables);
-    }    
-
   }
   
 }

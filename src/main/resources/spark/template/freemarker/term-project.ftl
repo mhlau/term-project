@@ -13,8 +13,7 @@
     </div>
     <br><br>
     <div style="text-align: center">
-    <button type="button" class="btn btn-info btn-lg" id="recordButton" style="font: bold 18px Arial">Begin Recording</button>
-    <button type="button" class="btn btn-info btn-lg" id="stopButton" style="font: bold 18px Arial">Stop Recording</button>
+    <button type="button" class="btn btn-info btn-lg" id="recordButton" style="font: bold 18px Arial">Start Recording</button>
     <button type="button" class="btn btn-info btn-lg" id="searchButton" style="font: bold 18px Arial">Search from Text</button>
     </div>
     <br>
