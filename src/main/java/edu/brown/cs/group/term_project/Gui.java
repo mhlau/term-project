@@ -67,11 +67,8 @@ public class Gui {
     Spark.get("/", new InitialLoadHandler(), freeMarker);
     Spark.post("/result", new YtVideoHandler());
     Spark.post("/record", new RecordHandler());
-
     Spark.post("/visualize", new VisHandler());
-
     Spark.post("/download", new DownloadHandler());
-
     Spark.get("/:id", new ReloadHandler(), freeMarker);   
   }
   
@@ -82,6 +79,7 @@ public class Gui {
           .put("title", "CS032 Term Project")
           .put("boxContents", "Enter search text here.")
           .put("oldResults", "")
+          .put("startStop", "Start")
           .put("resultsOrdering", "")
           .build();
       return new ModelAndView(variables, "term-project.ftl");

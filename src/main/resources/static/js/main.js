@@ -160,8 +160,12 @@ var download = function() {
 }
 
 var record = function() {
-	searchInput.value = "";
-	recordRec();
+	recordingOn = !recordingOn;
+	console.log(recordingOn);
+	if (recordingOn){
+		searchInput.value = "";
+		recordRec();
+	}
 }
 
 $("a[data-text]").click(function(){
