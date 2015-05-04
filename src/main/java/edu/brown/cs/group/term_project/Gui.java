@@ -187,20 +187,13 @@ public class Gui {
                 + " " +  res.get(i).getArtist());
      
             url = YouTubeSearchRunner.embedUrl();
-            
-            resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
 
             resultUrl.add(new JsonPrimitive(url));
             resultTitle.add(new JsonPrimitive(YouTubeSearchRunner.resultTitle()));
-            
+            resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
           }
         }
       }
-      /*
-      for (JsonElement s : resultLyrics) {
-        System.out.println(s);
-      }
-      */
       resultObject.add("resultUrl", resultUrl);
       resultObject.add("resultTitle", resultTitle);
       resultObject.add("resultLyrics", resultLyrics);
@@ -217,7 +210,12 @@ public class Gui {
       try {
         Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + songID).get();
         Elements lyrics = doc.body().getElementsByClass("lyric-box");
-        return lyrics.first().html();
+        String l = lyrics.first().html().replace("<div style=\"min-height: 25px; margin:0; padding: 12px 0 0 0; border-top: 1px dotted #ddd;\">", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID + "/\" id=\"lyrics-edit\" class=\"editbutton\" title=\"Edit Lyrics\">Edit Lyrics</a>", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID + "/?type=wiki\" id=\"lyrics-wiki-edit\" class=\"editbutton\" title=\"Edit Song Wiki\">Edit Wiki</a>", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID + "/?type=video\" id=\"lyrics-video-add\" class=\"editbutton\" title=\"Add Music Video\">Add Video</a>", "");
+        return l.replace("</div>", "");
+
       } catch (IOException e) {
         System.err.println("ERROR: IOException when trying to get lyrics for video.");
         return "";
