@@ -9,6 +9,7 @@ var restoreOrder = document.getElementById("RestoreOrder").innerHTML;
 var songLyrics = document.getElementById("songLyrics");
 var currentResults;
 var currentOrder = [0,1,2,3,4];
+var recordingOn = false;
 var downloadUrl;
 
 function swapCurrRes(i,j) {
@@ -138,18 +139,6 @@ var selectAll = function(id) {
 	searchInput.select();
 }
 
-var recordRec = function() {
-	$.post("/record", null, function(responseJSON) {
-		console.log(responseJSON);
-		response = JSON.parse(responseJSON);
-		newWords = response.words;
-		for (var i = 0; i < newWords.length; i++){
-			searchInput.value = searchInput.value + newWords[i] + " ";
-		}
-		recordRec();
-	});
-};
-
 var download = function() {
 	var postParams = {
 		"currentResults" : downloadUrl
@@ -158,6 +147,21 @@ var download = function() {
 
 	});
 }
+
+var recordRec = function() {
+	$.post("/record", null, function(responseJSON) {
+		
+		if (recordingOn){
+			console.log(responseJSON);
+			response = JSON.parse(responseJSON);
+			newWords = response.words;
+			for (var i = 0; i < newWords.length; i++){
+				searchInput.value = searchInput.value + newWords[i] + " ";
+			}
+			recordRec();
+		}
+	});
+};
 
 var record = function() {
 	recordingOn = !recordingOn;
@@ -187,7 +191,6 @@ $.post("/visualize", null, function(responseJSON) {
 
 
 searchInput.onclick = selectAll;
-
 searchButton.onclick = search;
 recordButton.onclick = record;
 downloadButton.onclick = download;
