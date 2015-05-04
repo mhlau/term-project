@@ -1,5 +1,6 @@
 var searchButton = document.getElementById("searchButton");
 var recordButton = document.getElementById("recordButton");
+var downloadButton = document.getElementById("downloadButton");
 var searchInput = document.getElementById("searchInput");
 var embedUrlText = document.getElementById("embedUrl");
 var nextResultsText = document.getElementById("nextResultsText");
@@ -8,18 +9,20 @@ var restoreOrder = document.getElementById("RestoreOrder").innerHTML;
 var songLyrics = document.getElementById("songLyrics");
 var currentResults;
 var currentOrder = [0,1,2,3,4];
+var downloadUrl;
+
 function swapCurrRes(i,j) {
 	tempU = currentResults.resultUrl[i];
-    tempT = currentResults.resultTitle[i];
+  tempT = currentResults.resultTitle[i];
 	tempL = currentResults.resultLyrics[i];
 	
 	currentResults.resultUrl[i] = currentResults.resultUrl[j];
-    currentResults.resultTitle[i] = currentResults.resultTitle[j];
-    currentResults.resultLyrics[i] = currentResults.resultLyrics[j];
+  currentResults.resultTitle[i] = currentResults.resultTitle[j];
+  currentResults.resultLyrics[i] = currentResults.resultLyrics[j];
     
-    currentResults.resultUrl[j] = tempU;
-    currentResults.resultTitle[j] = tempT;
-    currentResults.resultLyrics[j] = tempL;
+  currentResults.resultUrl[j] = tempU;
+  currentResults.resultTitle[j] = tempT;
+  currentResults.resultLyrics[j] = tempL;
 }
 function changeOrder(newOrder) {
   for (var i = 0; i < 5; i++) {
@@ -85,6 +88,11 @@ function packOrdering(order) {
 
    return order[0] + 10*order[1] +100*order[2]+1000*order[3]+10000*order[4] + 40000;
 }
+
+function showDownloadButton() {
+	downloadButton.style.display = "block";
+}
+
 var reloadEmbed = function() {
 	embedUrl = currentResults.resultUrl[0];
 	embedUrlText.innerHTML = 
@@ -97,8 +105,9 @@ var reloadEmbed = function() {
 			"<a href=\"javascript:void(0)\" onclick=\"changeSelected(" + i
                                 + ");\">" + currentResults.resultTitle[i] + "</a><br>"
 	}
-	console.log(currentResults.resultLyrics[0]);
 	songLyrics.innerHTML = currentResults.resultLyrics[0];
+	downloadUrl = currentResults.resultUrl[0];
+	showDownloadButton();
 }
 
 if (!(restoreText==="")) {
@@ -120,9 +129,16 @@ var search = function() {
 		reloadEmbed();
     history.pushState(null,null,"/"+currentResults.saveId + "" + packOrdering(currentOrder));
 	});
+	downloadUrl = currentResults.resultUrl[0];
+	showDownloadButton();
 };
 
-var record = function() {
+var selectAll = function(id) {
+	searchInput.focus();
+	searchInput.select();
+}
+
+var recordRec = function() {
 	$.post("/record", null, function(responseJSON) {
 		console.log(responseJSON);
 		response = JSON.parse(responseJSON);
@@ -130,14 +146,29 @@ var record = function() {
 		for (var i = 0; i < newWords.length; i++){
 			searchInput.value = searchInput.value + newWords[i] + " ";
 		}
-		record();
+		recordRec();
 	});
 };
+
+var download = function() {
+	var postParams = {
+		"currentResults" : downloadUrl
+	}
+	$.post("/download", postParams, function(responseJSON) {
+
+	});
+}
+
+var record = function() {
+	searchInput.value = "";
+	recordRec();
+}
 
 $("a[data-text]").click(function(){
   $("#searchInput").val($(this).attr("data-text"))
   return false;
 })
+
  var smooth = 0
 setInterval(function () {
 $.post("/visualize", null, function(responseJSON) {
@@ -149,5 +180,10 @@ $.post("/visualize", null, function(responseJSON) {
     var c = Math.min(255,Math.round(smooth/50));
     document.body.style.backgroundColor = "rgb("+125+","+c+","+c+")";
   });}, 150);
+
+
+searchInput.onclick = selectAll;
+
 searchButton.onclick = search;
 recordButton.onclick = record;
+downloadButton.onclick = download;

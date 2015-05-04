@@ -9,8 +9,13 @@ import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.matcher.SongSourceDistance;
 import edu.brown.cs.group.matcher.TwoSourceMatcher;
 
+// urls
+// display lyrics
+// karaoke mode ?
+
+
 /**
- *
+ * 
  */
 public final class Main {
 
@@ -24,6 +29,13 @@ public final class Main {
    * @throws Exception .
    */
   public static void main(String[] args) throws Exception {
+	 
+	  if (args.length != 3){
+		  System.out.println("USAGE: ./run <song database> <word category file> <word sentiment file>");
+		  System.out.println("For example, ./run evenBiggerDB.sqlite3 alls.words NRCnice.txt ");
+		  System.exit(1);
+	  }
+	 
     SongDatabase db = new SongDatabase(args[0], 15);
     List<Song> allSongs = db.getAllSongs();
     SongMatcher sm = new TwoSourceMatcher(

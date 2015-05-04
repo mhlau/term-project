@@ -1,6 +1,8 @@
 package edu.brown.cs.group.term_project;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +33,7 @@ import com.google.gson.JsonPrimitive;
 
 import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.speechtotext.LiveMode;
-//import edu.brown.cs.group.speechtotext.SpeechThread;
+import edu.brown.cs.group.speechtotext.SpeechThread;
 import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 
@@ -43,8 +45,11 @@ public class Gui {
   private static final boolean DEBUG = true;
   private static final Gson GSON = new Gson(); 
   private static final int PORT = 5235;
+
   private static Visualizer vis;
- // public static SpeechThread speechThread = null;
+
+  public static SpeechThread speechThread = null;
+
   public static Queue<String> words = new LinkedList<>();
 
   public Gui(SongMatcher sm) throws IOException {
@@ -62,7 +67,11 @@ public class Gui {
     Spark.get("/", new InitialLoadHandler(), freeMarker);
     Spark.post("/result", new YtVideoHandler());
     Spark.post("/record", new RecordHandler());
+
     Spark.post("/visualize", new VisHandler());
+
+    Spark.post("/download", new DownloadHandler());
+
     Spark.get("/:id", new ReloadHandler(), freeMarker);   
   }
   
@@ -125,18 +134,18 @@ public class Gui {
       List<String> newWords = null;
       
       try {
-    //	  if (speechThread == null){
-//	    	  speechThread = new SpeechThread();
-//	    	  speechThread.start();
-  //  	  }
+    	  if (speechThread == null){
+	    	  speechThread = new SpeechThread();
+	    	  speechThread.start();
+    	  }
 		  Thread.sleep(2000);
-//	      newWords = speechThread.getWords();
+	      newWords = speechThread.getWords();
 	  } catch (InterruptedException e) {
 		  e.printStackTrace();
-//	  } catch (IOException e) {
+	  } catch (IOException e) {
 		// TODO Auto-generated catch block
 
-//		e.printStackTrace();
+		e.printStackTrace();
 	}
       
 //      LiveMode lm;
@@ -174,6 +183,7 @@ public class Gui {
       JsonArray resultLyrics = new JsonArray();
       
       if (searchVal != null) {
+        // Perform matching from input text to song name/artist.
         List<String> dialogue = new ArrayList<String>();
         Scanner sc = new Scanner(searchVal);
         sc.useDelimiter("[^a-zA-Z]");
@@ -182,28 +192,19 @@ public class Gui {
         }
         sc.close();
         List<Song> res = sm.match(dialogue, 5);
-	
+        // Search Youtube for URLs corresponding to the top 5 matches.
         if (res.size() > 0) {
 
           for (int i = 0; i < res.size(); i++) {
             YouTubeSearchRunner.search(res.get(i).getTitle()
                 + " " +  res.get(i).getArtist());
-     
             url = YouTubeSearchRunner.embedUrl();
-            
-            resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
-
             resultUrl.add(new JsonPrimitive(url));
             resultTitle.add(new JsonPrimitive(YouTubeSearchRunner.resultTitle()));
-            
+            resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
           }
         }
       }
-      /*
-      for (JsonElement s : resultLyrics) {
-        System.out.println(s);
-      }
-      */
       resultObject.add("resultUrl", resultUrl);
       resultObject.add("resultTitle", resultTitle);
       resultObject.add("resultLyrics", resultLyrics);
@@ -220,7 +221,12 @@ public class Gui {
       try {
         Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + songID).get();
         Elements lyrics = doc.body().getElementsByClass("lyric-box");
-        return lyrics.first().html();
+        String l = lyrics.first().html().replace("<div style=\"min-height: 25px; margin:0; padding: 12px 0 0 0; border-top: 1px dotted #ddd;\">", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID + "/\" id=\"lyrics-edit\" class=\"editbutton\" title=\"Edit Lyrics\">Edit Lyrics</a>", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID + "/?type=wiki\" id=\"lyrics-wiki-edit\" class=\"editbutton\" title=\"Edit Song Wiki\">Edit Wiki</a>", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID + "/?type=video\" id=\"lyrics-video-add\" class=\"editbutton\" title=\"Add Music Video\">Add Video</a>", "");
+        return l.replace("</div>", "");
+
       } catch (IOException e) {
         System.err.println("ERROR: IOException when trying to get lyrics for video.");
         return "";
@@ -228,6 +234,7 @@ public class Gui {
     }
   }
   
+
   
   
   private static class VisHandler implements Route {
@@ -243,6 +250,40 @@ public class Gui {
     }
 
     
+
+  private static class DownloadHandler implements Route {
+    @Override
+    public Object handle(Request request, Response response) {
+      QueryParamsMap qm = request.queryMap();
+      String resultUrl = qm.value("currentResults");
+      String[] commands = {"python", "youtube-dl/downloadAudio.py", resultUrl};
+      String s;
+      try {
+        Process p = Runtime.getRuntime().exec(commands);
+        BufferedReader stdInput = new BufferedReader(
+            new InputStreamReader(p.getInputStream()));
+        BufferedReader stdError = new BufferedReader(
+            new InputStreamReader(p.getErrorStream()));
+        if (DEBUG) {
+          System.out.println("[DEBUG] Standard output of youtube-dl:");
+          while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+          }
+          System.out.println("[DEBUG] Standard error of youtube-dl:");
+          while ((s = stdError.readLine()) != null) {
+            System.out.println("[DEBUG] " + s);
+          }
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("success", true)
+          .build();
+      return GSON.toJson(variables);
+    }    
+
   }
   
 }
