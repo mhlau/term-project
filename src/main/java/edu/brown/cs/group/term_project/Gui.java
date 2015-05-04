@@ -62,11 +62,8 @@ public class Gui {
     Spark.get("/", new InitialLoadHandler(), freeMarker);
     Spark.post("/result", new YtVideoHandler());
     Spark.post("/record", new RecordHandler());
-<<<<<<< HEAD
     Spark.post("/download", new DownloadHandler());
-=======
     Spark.get("/:id", new ReloadHandler(), freeMarker);   
->>>>>>> 6a567b5439ab2769f1e26b109e993b0608da2ce5
   }
   
   private static class InitialLoadHandler implements TemplateViewRoute {
@@ -186,27 +183,16 @@ public class Gui {
         }
         sc.close();
         List<Song> res = sm.match(dialogue, 5);
-<<<<<<< HEAD
         // Search Youtube for URLs corresponding to the top 5 matches.
-=======
-	
->>>>>>> 6a567b5439ab2769f1e26b109e993b0608da2ce5
         if (res.size() > 0) {
 
           for (int i = 0; i < res.size(); i++) {
             YouTubeSearchRunner.search(res.get(i).getTitle()
                 + " " +  res.get(i).getArtist());
             url = YouTubeSearchRunner.embedUrl();
-<<<<<<< HEAD
-            resultObject.addProperty("resultUrl" + i, url);
-            resultObject.addProperty("resultTitle" + i,
-                YouTubeSearchRunner.resultTitle());
-=======
-
             resultUrl.add(new JsonPrimitive(url));
             resultTitle.add(new JsonPrimitive(YouTubeSearchRunner.resultTitle()));
             resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
->>>>>>> 6a567b5439ab2769f1e26b109e993b0608da2ce5
           }
         }
       }

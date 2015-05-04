@@ -1,5 +1,6 @@
 var searchButton = document.getElementById("searchButton");
 var recordButton = document.getElementById("recordButton");
+var downloadButton = document.getElementById("downloadButton");
 var searchInput = document.getElementById("searchInput");
 var embedUrlText = document.getElementById("embedUrl");
 var nextResultsText = document.getElementById("nextResultsText");
@@ -87,6 +88,11 @@ function packOrdering(order) {
 
    return order[0] + 10*order[1] +100*order[2]+1000*order[3]+10000*order[4] + 40000;
 }
+
+function showDownloadButton() {
+	downloadButton.style.display = "block";
+}
+
 var reloadEmbed = function() {
 	embedUrl = currentResults.resultUrl[0];
 	embedUrlText.innerHTML = 
@@ -100,6 +106,8 @@ var reloadEmbed = function() {
                                 + ");\">" + currentResults.resultTitle[i] + "</a><br>"
 	}
 	songLyrics.innerHTML = currentResults.resultLyrics[0];
+	downloadUrl = currentResults.resultUrl[0];
+	showDownloadButton();
 }
 
 if (!(restoreText==="")) {
@@ -121,6 +129,8 @@ var search = function() {
 		reloadEmbed();
     history.pushState(null,null,"/"+currentResults.saveId + "" + packOrdering(currentOrder));
 	});
+	downloadUrl = currentResults.resultUrl[0];
+	showDownloadButton();
 };
 
 var selectAll = function(id) {
@@ -140,6 +150,15 @@ var record = function() {
 	});
 };
 
+var download = function() {
+	var postParams = {
+		"currentResults" : downloadUrl
+	}
+	$.post("/download", postParams, function(responseJSON) {
+
+	});
+}
+
 $("a[data-text]").click(function(){
   $("#searchInput").val($(this).attr("data-text"))
   return false;
@@ -148,3 +167,4 @@ $("a[data-text]").click(function(){
 searchInput.onclick = selectAll;
 searchButton.onclick = search;
 recordButton.onclick = record;
+downloadButton.onclick = download;
