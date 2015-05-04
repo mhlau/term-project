@@ -63,28 +63,33 @@ public class Gui {
           .put("title", "CS032 Term Project")
           .put("boxContents", "Enter search text here.")
           .put("oldResults", "")
+          .put("resultsOrdering", "")
           .build();
       return new ModelAndView(variables, "term-project.ftl");
     }
   }
+  
+  
   private static class ReloadHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request request, Response response) {
       int id = 0;
       boolean valid = true;
+      
       try {
         id = Integer.valueOf(request.params(":id"));
       } catch (NumberFormatException e) {
         valid = false;
       }
-      if (id >= bufferedRequests.size()) {
+      if (id/100000 >= bufferedRequests.size() || id/100000 < 0) {
         valid = false;
       }
       if (valid) {
         Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
             .put("title", "CS032 Term Project")
-            .put("boxContents",  bufferedRequests.get(id))
-            .put("oldResults",  GSON.toJson(bufferedResponses.get(id)))
+            .put("boxContents",  bufferedRequests.get(id/100000))
+            .put("oldResults",  GSON.toJson(bufferedResponses.get(id/100000)))
+            .put("resultsOrdering",  GSON.toJson(new JsonPrimitive(id%100000)))
             .build();
         return new ModelAndView(variables, "term-project.ftl");
       } else {
@@ -92,6 +97,7 @@ public class Gui {
           .put("title", "CS032 Term Project")
           .put("boxContents", "Enter search text here.")
           .put("oldResults", "")
+          .put("resultsOrdering", "")
           .build();
         return new ModelAndView(variables, "term-project.ftl");        
       }

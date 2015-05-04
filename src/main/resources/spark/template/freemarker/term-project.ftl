@@ -2,6 +2,7 @@
 
 <h1 class="title" id="titleText">Speech-to-Text Music Finder</h1>
 <p hidden id="Restore">${oldResults}</p>
+<p hidden id="RestoreOrder">${resultsOrdering}</p>
 <div class="wrapper">
 	<br><br>
     <div>
