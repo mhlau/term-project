@@ -127,7 +127,7 @@ var selectAll = function(id) {
 	searchInput.select();
 }
 
-var record = function() {
+var recordRec = function() {
 	$.post("/record", null, function(responseJSON) {
 		console.log(responseJSON);
 		response = JSON.parse(responseJSON);
@@ -135,9 +135,14 @@ var record = function() {
 		for (var i = 0; i < newWords.length; i++){
 			searchInput.value = searchInput.value + newWords[i] + " ";
 		}
-		record();
+		recordRec();
 	});
 };
+
+var record = function() {
+	searchInput.value = "";
+	recordRec();
+}
 
 $("a[data-text]").click(function(){
   $("#searchInput").val($(this).attr("data-text"))
