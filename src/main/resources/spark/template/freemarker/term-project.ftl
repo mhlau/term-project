@@ -5,10 +5,13 @@
 <p hidden id="RestoreOrder">${resultsOrdering}</p>
 <div class="wrapper">
 	<br><br>
-    <div>
+    <div style="text-align: center">
+        <canvas id="visualizerA" width="370" height="200"></canvas>
     <textarea id="searchInput">${boxContents}</textarea>
+            <canvas id="visualizerB" width="370" height="200"></canvas>
+    
     </div>
-    <br>
+    <br><br>
     <div style="text-align: center">
     <button type="button" class="btn btn-info btn-lg" id="recordButton" style="font: bold 18px Arial">Begin Recording</button>
     <button type="button" class="btn btn-info btn-lg" id="stopButton" style="font: bold 18px Arial">Stop Recording</button>
@@ -81,8 +84,14 @@ That I might touch that cheek!
     </a>
     </div>
     <br><br>
+     
+     
+    
     <div id="resultVideoDiv">
+
     <p id="embedUrl"></p>
+
+    
     <br>
     <div style="text-align: center">
     <button type="button" class="btn btn-info btn-lg" id="downloadButton" style="font: bold 18px Arial">Download this Song</button>
