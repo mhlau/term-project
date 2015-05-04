@@ -152,7 +152,6 @@ var recordRec = function() {
 	$.post("/record", null, function(responseJSON) {
 		
 		if (recordingOn){
-			console.log(responseJSON);
 			response = JSON.parse(responseJSON);
 			newWords = response.words;
 			for (var i = 0; i < newWords.length; i++){
@@ -164,13 +163,18 @@ var recordRec = function() {
 };
 
 var record = function() {
+
 	recordingOn = !recordingOn;
 	console.log(recordingOn);
 	if (recordingOn){
+	    recordButton.innerHTML = "Stop Recording";
 		searchInput.value = "";
 		recordRec();
+	} else {
+		recordButton.innerHTML = "Start Recording";
 	}
-}
+	
+};
 
 $("a[data-text]").click(function(){
   $("#searchInput").val($(this).attr("data-text"))
@@ -182,7 +186,6 @@ setInterval(function () {
 $.post("/visualize", null, function(responseJSON) {
     var val = JSON.parse(responseJSON);
     smooth = Math.round(smooth*.9 + val.level*.1);
-    console.log(val);
     //searchButton.style.width = "" + Math.round(200*Math.exp(smooth/10000)) + "px";
    // recordButton.style.width = "" + Math.round(200*Math.exp(smooth/10000)) + "px";
     var c = Math.min(255,Math.round(smooth/50));

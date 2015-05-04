@@ -79,7 +79,6 @@ public class Gui {
           .put("title", "CS032 Term Project")
           .put("boxContents", "Enter search text here.")
           .put("oldResults", "")
-          .put("startStop", "Start")
           .put("resultsOrdering", "")
           .build();
       return new ModelAndView(variables, "term-project.ftl");
@@ -106,7 +105,6 @@ public class Gui {
             .put("title", "CS032 Term Project")
             .put("boxContents",  bufferedRequests.get(id/100000))
             .put("oldResults",  GSON.toJson(bufferedResponses.get(id/100000)))
-            .put("startStop", "Start")
             .put("resultsOrdering",  GSON.toJson(new JsonPrimitive(id%100000)))
             .build();
         return new ModelAndView(variables, "term-project.ftl");
@@ -115,7 +113,6 @@ public class Gui {
           .put("title", "CS032 Term Project")
           .put("boxContents", "Enter search text here.")
           .put("oldResults", "")
-          .put("startStop", "Start")
           .put("resultsOrdering", "")
           .build();
         return new ModelAndView(variables, "term-project.ftl");        
@@ -128,8 +125,6 @@ public class Gui {
       if (DEBUG) {
         System.out.println("[DEBUG] Recording.");
       }
-      
-      System.out.println("start record handler");
       
       List<String> newWords = null;
       
