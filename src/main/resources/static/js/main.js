@@ -2,7 +2,8 @@ var searchButton = document.getElementById("searchButton");
 var recordButton = document.getElementById("recordButton");
 var searchInput = document.getElementById("searchInput");
 var embedUrlText = document.getElementById("embedUrl");
-var nextResultsText = document.getElementById("nextResultsText")
+var nextResultsText = document.getElementById("nextResultsText");
+var restoreText = document.getElementById("Restore").innerHTML;
 var currentResults;
 function changeSelected(i) {
         tempT = currentResults.resultTitle[0];
@@ -28,6 +29,12 @@ var reloadEmbed = function() {
                                 + ");\">" + currentResults.resultTitle[i] + "</a><br>"
 	}
 }
+
+if (!(restoreText==="")) {
+  console.log(restoreText);
+  currentResults = JSON.parse(restoreText);
+  reloadEmbed();
+}
 var search = function() {
 	var searchVal = searchInput.value;
 	var postParams = {
@@ -38,6 +45,7 @@ var search = function() {
 		console.log(response);	
 		currentResults = response.result;
 		reloadEmbed();
+    history.pushState(null,null,"/"+currentResults.saveId);
 	});
 };
 

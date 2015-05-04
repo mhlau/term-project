@@ -31,6 +31,8 @@ import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 public class Gui {
   
   private static SongMatcher sm; 
+  private static List<String> bufferedRequests;
+  private static List<JsonObject> bufferedResponses;   
   private static final boolean DEBUG = true;
   private static final Gson GSON = new Gson(); 
   private static final int PORT = 5235;
@@ -39,15 +41,19 @@ public class Gui {
 
   public Gui(SongMatcher sm) throws IOException {
     Gui.sm = sm;
+    bufferedRequests = new ArrayList<String>();
+    bufferedResponses = new ArrayList<JsonObject>();    
     runSparkServer();
   }
   
   private static void runSparkServer() {
+    FreeMarkerEngine freeMarker =  new FreeMarkerEngine();
     Spark.setPort(PORT);
     Spark.externalStaticFileLocation("src/main/resources/static");
-    Spark.get("/", new InitialLoadHandler(), new FreeMarkerEngine());
+    Spark.get("/", new InitialLoadHandler(), freeMarker);
     Spark.post("/result", new YtVideoHandler());
     Spark.post("/record", new RecordHandler());
+    Spark.get("/:id", new ReloadHandler(), freeMarker);   
   }
   
   private static class InitialLoadHandler implements TemplateViewRoute {
@@ -55,11 +61,42 @@ public class Gui {
     public ModelAndView handle(Request request, Response response) {
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("title", "CS032 Term Project")
+          .put("boxContents", "Enter search text here.")
+          .put("oldResults", "")
           .build();
       return new ModelAndView(variables, "term-project.ftl");
     }
   }
-  
+  private static class ReloadHandler implements TemplateViewRoute {
+    @Override
+    public ModelAndView handle(Request request, Response response) {
+      int id = 0;
+      boolean valid = true;
+      try {
+        id = Integer.valueOf(request.params(":id"));
+      } catch (NumberFormatException e) {
+        valid = false;
+      }
+      if (id >= bufferedRequests.size()) {
+        valid = false;
+      }
+      if (valid) {
+        Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+            .put("title", "CS032 Term Project")
+            .put("boxContents",  bufferedRequests.get(id))
+            .put("oldResults",  GSON.toJson(bufferedResponses.get(id)))
+            .build();
+        return new ModelAndView(variables, "term-project.ftl");
+      } else {
+        Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("title", "CS032 Term Project")
+          .put("boxContents", "Enter search text here.")
+          .put("oldResults", "")
+          .build();
+        return new ModelAndView(variables, "term-project.ftl");        
+      }
+    }
+  }  
   private static class RecordHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -143,6 +180,9 @@ public class Gui {
       }
       resultObject.add("resultUrl", resultUrl);
       resultObject.add("resultTitle", resultTitle);
+      resultObject.add("saveId", new JsonPrimitive(""+bufferedRequests.size()));
+      bufferedRequests.add(searchVal);
+      bufferedResponses.add(resultObject);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("result", resultObject)
           .build();

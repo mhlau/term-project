@@ -1,10 +1,11 @@
 <#assign content>
-<h1 class="title" id="titleText">Speech-to-Text Music Finder</h1>
 
+<h1 class="title" id="titleText">Speech-to-Text Music Finder</h1>
+<p hidden id="Restore">${oldResults}</p>
 <div class="wrapper">
 	<br><br>
     <div>
-    <textarea id="searchInput">Enter search text here.</textarea>
+    <textarea id="searchInput">${boxContents}</textarea>
     </div>
     <br>
     <div style="text-align: center">
