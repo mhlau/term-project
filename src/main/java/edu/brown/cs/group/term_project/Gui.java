@@ -31,7 +31,7 @@ import com.google.gson.JsonPrimitive;
 
 import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.speechtotext.LiveMode;
-//import edu.brown.cs.group.speechtotext.SpeechThread;
+import edu.brown.cs.group.speechtotext.SpeechThread;
 import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 
@@ -43,7 +43,7 @@ public class Gui {
   private static final boolean DEBUG = true;
   private static final Gson GSON = new Gson(); 
   private static final int PORT = 5235;
- // public static SpeechThread speechThread = null;
+  public static SpeechThread speechThread = null;
   public static Queue<String> words = new LinkedList<>();
 
   public Gui(SongMatcher sm) throws IOException {
@@ -122,18 +122,18 @@ public class Gui {
       List<String> newWords = null;
       
       try {
-    //	  if (speechThread == null){
-//	    	  speechThread = new SpeechThread();
-//	    	  speechThread.start();
-  //  	  }
+    	  if (speechThread == null){
+	    	  speechThread = new SpeechThread();
+	    	  speechThread.start();
+    	  }
 		  Thread.sleep(2000);
-//	      newWords = speechThread.getWords();
+	      newWords = speechThread.getWords();
 	  } catch (InterruptedException e) {
 		  e.printStackTrace();
-//	  } catch (IOException e) {
+	  } catch (IOException e) {
 		// TODO Auto-generated catch block
 
-//		e.printStackTrace();
+		e.printStackTrace();
 	}
       
 //      LiveMode lm;
