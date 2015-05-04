@@ -249,7 +249,7 @@ public class Gui {
       return GSON.toJson(variables);
     }
 
-    
+  }
 
   private static class DownloadHandler implements Route {
     @Override
