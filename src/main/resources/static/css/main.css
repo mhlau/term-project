@@ -37,8 +37,8 @@ textarea {
 }
 
 .scroll-up {
-	height: 200px;	
- 	overflow: hidden;
+	height: 200px;
+ 	overflow: auto;
  	position: relative;
 }
 
@@ -52,13 +52,13 @@ textarea {
  	-webkit-transform: translateY(100%);
  	transform: translateY(100%);
 
- 	-webkit-animation: scroll-up 336s linear infinite;
- 	animation: scroll-up 336s linear infinite;
+ 	-webkit-animation: scroll-up 120s ease-in infinite;
+ 	animation: scroll-up 120s ease-in infinite;
 }
 
 @-webkit-keyframes scroll-up {
 	0%   { -webkit-transform: translateY(100%); }
-	100% { -webkit-transform: translateY(-100%); }
+	100% { -webkit-transform: translateY(-1000%); }
 }
 @keyframes scroll-up {
 	0%   {
@@ -66,7 +66,7 @@ textarea {
  		transform: translateY(100%); 		
  	}
  	100% {
- 		-webkit-transform: translateY(-100%); /* Browser bug fix */
- 		transform: translateY(-100%); 
+ 		-webkit-transform: translateY(-1000%); /* Browser bug fix */
+ 		transform: translateY(-1000%); 
  	}
 }

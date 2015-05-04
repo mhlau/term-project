@@ -8,6 +8,7 @@ var restoreOrder = document.getElementById("RestoreOrder").innerHTML;
 var songLyrics = document.getElementById("songLyrics");
 var currentResults;
 var currentOrder = [0,1,2,3,4];
+
 function swapCurrRes(i,j) {
 	tempU = currentResults.resultUrl[i];
     tempT = currentResults.resultTitle[i];
@@ -99,6 +100,7 @@ var reloadEmbed = function() {
 	}
 	console.log(currentResults.resultLyrics[0]);
 	songLyrics.innerHTML = currentResults.resultLyrics[0];
+	ctx.fillText(currentResults.resultLyrics[0], 50, 10);
 }
 
 if (!(restoreText==="")) {
