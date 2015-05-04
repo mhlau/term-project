@@ -1,0 +1,37 @@
+#titleText {
+	text-align: center;
+}
+
+textarea {
+	resize: none;
+}
+
+#searchInput {
+	width: 400px;
+	height: 200px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#recordButton {
+	margin: 0 auto;
+	display: inline-block;
+	position: relative;
+}
+
+#searchButton {
+	margin: 0 auto;
+	display: inline-block;
+	position: relative;
+}
+
+#resultUrl {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#resultVideoDiv {
+	text-align: center;
+}

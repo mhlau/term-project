@@ -138,6 +138,16 @@ $("a[data-text]").click(function(){
   $("#searchInput").val($(this).attr("data-text"))
   return false;
 })
-
+ var smooth = 0
+setInterval(function () {
+$.post("/visualize", null, function(responseJSON) {
+    var val = JSON.parse(responseJSON);
+    smooth = Math.round(smooth*.9 + val.level*.1);
+    console.log(val);
+    //searchButton.style.width = "" + Math.round(200*Math.exp(smooth/10000)) + "px";
+   // recordButton.style.width = "" + Math.round(200*Math.exp(smooth/10000)) + "px";
+    var c = Math.min(255,Math.round(smooth/50));
+    document.body.style.backgroundColor = "rgb("+125+","+c+","+c+")";
+  });}, 150);
 searchButton.onclick = search;
 recordButton.onclick = record;

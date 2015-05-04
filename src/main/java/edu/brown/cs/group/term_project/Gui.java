@@ -43,11 +43,13 @@ public class Gui {
   private static final boolean DEBUG = true;
   private static final Gson GSON = new Gson(); 
   private static final int PORT = 5235;
+  private static Visualizer vis;
  // public static SpeechThread speechThread = null;
   public static Queue<String> words = new LinkedList<>();
 
   public Gui(SongMatcher sm) throws IOException {
     Gui.sm = sm;
+    vis = new Visualizer();
     bufferedRequests = new ArrayList<String>();
     bufferedResponses = new ArrayList<JsonObject>();    
     runSparkServer();
@@ -60,6 +62,7 @@ public class Gui {
     Spark.get("/", new InitialLoadHandler(), freeMarker);
     Spark.post("/result", new YtVideoHandler());
     Spark.post("/record", new RecordHandler());
+    Spark.post("/visualize", new VisHandler());
     Spark.get("/:id", new ReloadHandler(), freeMarker);   
   }
   
@@ -223,6 +226,23 @@ public class Gui {
         return "";
       }
     }
+  }
+  
+  
+  
+  private static class VisHandler implements Route {
+    @Override
+    public Object handle(Request request, Response response) {
+
+      
+
+      Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+          .put("level", vis.getWord())
+          .build();
+      return GSON.toJson(variables);
+    }
+
+    
   }
   
 }
