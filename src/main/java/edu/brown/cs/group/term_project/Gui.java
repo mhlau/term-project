@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
@@ -20,8 +25,10 @@ import spark.template.freemarker.FreeMarkerEngine;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+
 import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.speechtotext.LiveMode;
 //import edu.brown.cs.group.speechtotext.SpeechThread;
@@ -160,6 +167,9 @@ public class Gui {
       JsonObject resultObject = new JsonObject();
       JsonArray resultUrl = new JsonArray();
       JsonArray resultTitle = new JsonArray();
+      
+      JsonArray resultLyrics = new JsonArray();
+      
       if (searchVal != null) {
         List<String> dialogue = new ArrayList<String>();
         Scanner sc = new Scanner(searchVal);
@@ -177,6 +187,8 @@ public class Gui {
                 + " " +  res.get(i).getArtist());
      
             url = YouTubeSearchRunner.embedUrl();
+            
+            resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
 
             resultUrl.add(new JsonPrimitive(url));
             resultTitle.add(new JsonPrimitive(YouTubeSearchRunner.resultTitle()));
@@ -184,8 +196,14 @@ public class Gui {
           }
         }
       }
+      /*
+      for (JsonElement s : resultLyrics) {
+        System.out.println(s);
+      }
+      */
       resultObject.add("resultUrl", resultUrl);
       resultObject.add("resultTitle", resultTitle);
+      resultObject.add("resultLyrics", resultLyrics);
       resultObject.add("saveId", new JsonPrimitive(""+bufferedRequests.size()));
       bufferedRequests.add(searchVal);
       bufferedResponses.add(resultObject);
@@ -193,6 +211,17 @@ public class Gui {
           .put("result", resultObject)
           .build();
       return GSON.toJson(variables);
+    }
+
+    private String getLyricsHTML(int songID) {
+      try {
+        Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + songID).get();
+        Elements lyrics = doc.body().getElementsByClass("lyric-box");
+        return lyrics.first().html();
+      } catch (IOException e) {
+        System.err.println("ERROR: IOException when trying to get lyrics for video.");
+        return "";
+      }
     }
   }
   

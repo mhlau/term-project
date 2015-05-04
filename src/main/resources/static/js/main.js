@@ -5,15 +5,21 @@ var embedUrlText = document.getElementById("embedUrl");
 var nextResultsText = document.getElementById("nextResultsText");
 var restoreText = document.getElementById("Restore").innerHTML;
 var restoreOrder = document.getElementById("RestoreOrder").innerHTML;
+var songLyrics = document.getElementById("songLyrics");
 var currentResults;
 var currentOrder = [0,1,2,3,4];
 function swapCurrRes(i,j) {
-        tempT = currentResults.resultTitle[i];
 	tempU = currentResults.resultUrl[i];
+    tempT = currentResults.resultTitle[i];
+	tempL = currentResults.resultLyrics[i];
+	
 	currentResults.resultUrl[i] = currentResults.resultUrl[j];
-    	currentResults.resultTitle[i] = currentResults.resultTitle[j];
-    	currentResults.resultUrl[j] = tempU;
-    	currentResults.resultTitle[j] = tempT;
+    currentResults.resultTitle[i] = currentResults.resultTitle[j];
+    currentResults.resultLyrics[i] = currentResults.resultLyrics[j];
+    
+    currentResults.resultUrl[j] = tempU;
+    currentResults.resultTitle[j] = tempT;
+    currentResults.resultLyrics[j] = tempL;
 }
 function changeOrder(newOrder) {
   for (var i = 0; i < 5; i++) {
@@ -91,6 +97,8 @@ var reloadEmbed = function() {
 			"<a href=\"javascript:void(0)\" onclick=\"changeSelected(" + i
                                 + ");\">" + currentResults.resultTitle[i] + "</a><br>"
 	}
+	console.log(currentResults.resultLyrics[0]);
+	songLyrics.innerHTML = currentResults.resultLyrics[0];
 }
 
 if (!(restoreText==="")) {
