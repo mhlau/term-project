@@ -21,10 +21,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
+import com.google.gson.JsonPrimitive;
 import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.speechtotext.LiveMode;
-import edu.brown.cs.group.speechtotext.SpeechThread;
+//import edu.brown.cs.group.speechtotext.SpeechThread;
 import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 
@@ -34,7 +34,7 @@ public class Gui {
   private static final boolean DEBUG = true;
   private static final Gson GSON = new Gson(); 
   private static final int PORT = 5235;
-  public static SpeechThread speechThread = null;
+ // public static SpeechThread speechThread = null;
   public static Queue<String> words = new LinkedList<>();
 
   public Gui(SongMatcher sm) throws IOException {
@@ -72,17 +72,18 @@ public class Gui {
       List<String> newWords = null;
       
       try {
-    	  if (speechThread == null){
-	    	  speechThread = new SpeechThread();
-	    	  speechThread.start();
-    	  }
+    //	  if (speechThread == null){
+//	    	  speechThread = new SpeechThread();
+//	    	  speechThread.start();
+  //  	  }
 		  Thread.sleep(2000);
-	      newWords = speechThread.getWords();
+//	      newWords = speechThread.getWords();
 	  } catch (InterruptedException e) {
 		  e.printStackTrace();
-	  } catch (IOException e) {
+//	  } catch (IOException e) {
 		// TODO Auto-generated catch block
-		e.printStackTrace();
+
+//		e.printStackTrace();
 	}
       
 //      LiveMode lm;
@@ -114,6 +115,8 @@ public class Gui {
       String searchVal = qm.value("searchVal");
       String url = "";
       JsonObject resultObject = new JsonObject();
+      JsonArray resultUrl = new JsonArray();
+      JsonArray resultTitle = new JsonArray();
       if (searchVal != null) {
         List<String> dialogue = new ArrayList<String>();
         Scanner sc = new Scanner(searchVal);
@@ -123,19 +126,23 @@ public class Gui {
         }
         sc.close();
         List<Song> res = sm.match(dialogue, 5);
+	
         if (res.size() > 0) {
+
           for (int i = 0; i < res.size(); i++) {
             YouTubeSearchRunner.search(res.get(i).getTitle()
                 + " " +  res.get(i).getArtist());
      
             url = YouTubeSearchRunner.embedUrl();
-            resultObject.addProperty("resultUrl" + i, url);
-            resultObject.addProperty("resultTitle" + i,
-                YouTubeSearchRunner.resultTitle());
+
+            resultUrl.add(new JsonPrimitive(url));
+            resultTitle.add(new JsonPrimitive(YouTubeSearchRunner.resultTitle()));
             
           }
         }
       }
+      resultObject.add("resultUrl", resultUrl);
+      resultObject.add("resultTitle", resultTitle);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("result", resultObject)
           .build();
