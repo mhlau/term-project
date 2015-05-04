@@ -85,7 +85,9 @@ That I might touch that cheek!
     <br>
     <p id="nextResultsText"></p>
     <br>
-    <p id="songLyrics"></p>
+    <div class="scroll-up"> 
+      <p id="songLyrics"></p>
+    </div>
 	  </div>
     <br><br>
 </div>
