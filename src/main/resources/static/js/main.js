@@ -1,53 +1,112 @@
 var searchButton = document.getElementById("searchButton");
 var recordButton = document.getElementById("recordButton");
-var stopButton = document.getElementById("stopButton");
 var searchInput = document.getElementById("searchInput");
 var embedUrlText = document.getElementById("embedUrl");
-var nextResultsText = document.getElementById("nextResultsText")
+var nextResultsText = document.getElementById("nextResultsText");
+var restoreText = document.getElementById("Restore").innerHTML;
+var restoreOrder = document.getElementById("RestoreOrder").innerHTML;
+var songLyrics = document.getElementById("songLyrics");
 var currentResults;
+var currentOrder = [0,1,2,3,4];
 var downloadUrl;
-var listening = false;
+
+function swapCurrRes(i,j) {
+	tempU = currentResults.resultUrl[i];
+  tempT = currentResults.resultTitle[i];
+	tempL = currentResults.resultLyrics[i];
+	
+	currentResults.resultUrl[i] = currentResults.resultUrl[j];
+  currentResults.resultTitle[i] = currentResults.resultTitle[j];
+  currentResults.resultLyrics[i] = currentResults.resultLyrics[j];
+    
+  currentResults.resultUrl[j] = tempU;
+  currentResults.resultTitle[j] = tempT;
+  currentResults.resultLyrics[j] = tempL;
+}
+function changeOrder(newOrder) {
+  for (var i = 0; i < 5; i++) {
+    swapCurrRes(i, currentOrder.indexOf(newOrder[i]));
+    currentOrder[currentOrder.indexOf(newOrder[i])] = currentOrder[i]
+    currentOrder[i] = newOrder[i]
+  }
+}
 
 function changeSelected(i) {
-    tempT = currentResults.resultTitle0;
-	tempU = currentResults.resultUrl0;
-	if (i == 1) {
-    		currentResults.resultUrl0 = currentResults.resultUrl1;
-    		currentResults.resultTitle0 = currentResults.resultTitle1;
-    		currentResults.resultUrl1 = tempU;
-    		currentResults.resultTitle1 = tempT;
-  	} else if (i == 2) {
-    		currentResults.resultUrl0 = currentResults.resultUrl2;
-    		currentResults.resultTitle0 = currentResults.resultTitle2;
-    		currentResults.resultUrl2 = tempU;
-    		currentResults.resultTitle2 = tempT;
-	} else if (i == 3) {
-    		currentResults.resultUrl0 = currentResults.resultUrl3;
-    		currentResults.resultTitle0 = currentResults.resultTitle3;
-    		currentResults.resultUrl3 = tempU;
-    		currentResults.resultTitle3 = tempT;
-	} else if (i == 4) {
-    		currentResults.resultUrl0 = currentResults.resultUrl4;
-    		currentResults.resultTitle0 = currentResults.resultTitle4;
-    		currentResults.resultUrl4 = tempU;
-    		currentResults.resultTitle4 = tempT;
-	}
-	embedUrl = currentResults.resultUrl0;
-	downloadUrl = currentResults.resultUrl0;
+  var newArr = [currentOrder[i]];
+  for (var j = 1; j < 5; j++) {
+    if (j == i) {
+      newArr[j] = currentOrder[0];
+    } else {
+      newArr[j] = currentOrder[j];
+    }
+  }
+  console.log(newArr);
+  changeOrder(newArr);
+  console.log(currentOrder);
+  reloadEmbed();
+  history.pushState(null,null,"/"+currentResults.saveId + "" + packOrdering(currentOrder));
+
+}
+
+//~ function unpackOrdering(num) {
+  //~ var start = [0,1,2,3,4];
+  //~ var retarr = [num%5];
+  //~ start.splice(num%5,1);
+  //~ num = num/5;
+  //~ for (var j = 1; j < 5; j++) {
+    //~ var guess = num%(5-j);
+    //~ num = num/(5-j);
+    //~ retarr[j] = start[guess];
+    //~ start.splice(guess,1);
+  //~ }
+  //~ return retarr;
+//~ }
+
+function unpackOrdering(num) {
+  var def = [0,1, 2, 3, 4];
+  var ret = []
+  num = parseInt(num) - 40000;
+  if (num < 0) {
+    return def;
+  }
+  for (var i = 0; i < 5; i++) {
+     console.log(i);
+     console.log(ret);
+     console.log(num);
+    ret[i] = num%10;
+    if (ret[i] > 4 || ret.indexOf(ret[i]) != i) {
+      return def;
+    }
+    
+    num = Math.floor(num/10);
+  }
+  return ret;
+}
+
+function packOrdering(order) {
+
+   return order[0] + 10*order[1] +100*order[2]+1000*order[3]+10000*order[4] + 40000;
+}
+var reloadEmbed = function() {
+	embedUrl = currentResults.resultUrl[0];
 	embedUrlText.innerHTML = 
 		"<iframe width=\"560\" height=\"315\"src=\"" 
 		+ embedUrl 
 		+ "?autoplay=1\"frameborder=\"0\" allowfullscreen></iframe>";
-	nextResultsText.innerHTML = 
-		"Wasn't relevant? Try these songs: <br>"
-		+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(1);\">" + currentResults.resultTitle1 + "</a><br>"
-		+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(2);\">" + currentResults.resultTitle2 + "</a><br>"
-		+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(3);\">" + currentResults.resultTitle3 + "</a><br>"
-		+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(4);\">" + currentResults.resultTitle4 + "</a>"
+	nextResultsText.innerHTML =  "Wasn't relevant? Try these songs: <br>";
+	for (var i = 1; i < 5; i++) {
+		nextResultsText.innerHTML =  nextResultsText.innerHTML + 
+			"<a href=\"javascript:void(0)\" onclick=\"changeSelected(" + i
+                                + ");\">" + currentResults.resultTitle[i] + "</a><br>"
+	}
+	songLyrics.innerHTML = currentResults.resultLyrics[0];
 }
 
-function showDownloadButton() {
-	downloadButton.style.display = "block";
+if (!(restoreText==="")) {
+  console.log(restoreText);
+  currentResults = JSON.parse(restoreText);
+  changeOrder(unpackOrdering(JSON.parse(restoreOrder)));
+  reloadEmbed();
 }
 
 var search = function() {
@@ -59,39 +118,22 @@ var search = function() {
 		response = JSON.parse(responseJSON);
 		console.log(response);	
 		currentResults = response.result;
-		embedUrl = currentResults.resultUrl0;
-		showDownloadButton();
-		downloadUrl = currentResults.resultUrl0;
-		embedUrlText.innerHTML = 
-			"<iframe width=\"560\" height=\"315\"src=\"" 
-			+ embedUrl 
-			+ "?autoplay=1\"frameborder=\"0\" allowfullscreen></iframe>";
-		nextResultsText.innerHTML = 
-			"Wasn't relevant? Try these songs: <br>"
-			+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(1);\">" + response.result.resultTitle1 + "</a><br>"
-			+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(2);\">" + response.result.resultTitle2 + "</a><br>"
-			+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(3);\">" + response.result.resultTitle3 + "</a><br>"
-			+ "<a href=\"javascript:void(0)\" onclick=\"changeSelected(4);\">" + response.result.resultTitle4 + "</a>"
+		reloadEmbed();
+    history.pushState(null,null,"/"+currentResults.saveId + "" + packOrdering(currentOrder));
 	});
 };
 
 var record = function() {
-	searchInput.value = "";
-	listening = true;
-};
-
-var stopListening = function() {
-	listening = false;
-}
-
-var download = function() {
-	var postParams = {
-		"currentResults" : downloadUrl
-	}
-	$.post("/download", postParams, function(responseJSON) {
-
+	$.post("/record", null, function(responseJSON) {
+		console.log(responseJSON);
+		response = JSON.parse(responseJSON);
+		newWords = response.words;
+		for (var i = 0; i < newWords.length; i++){
+			searchInput.value = searchInput.value + newWords[i] + " ";
+		}
+		record();
 	});
-}
+};
 
 $("a[data-text]").click(function(){
   $("#searchInput").val($(this).attr("data-text"))
@@ -100,5 +142,3 @@ $("a[data-text]").click(function(){
 
 searchButton.onclick = search;
 recordButton.onclick = record;
-downloadButton.onclick = download;
-stopButton.onclick = stopListening;
