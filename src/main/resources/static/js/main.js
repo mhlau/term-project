@@ -123,6 +123,11 @@ var search = function() {
 	});
 };
 
+var selectAll = function(id) {
+	searchInput.focus();
+	searchInput.select();
+}
+
 var record = function() {
 	$.post("/record", null, function(responseJSON) {
 		console.log(responseJSON);
@@ -140,5 +145,6 @@ $("a[data-text]").click(function(){
   return false;
 })
 
+searchInput.onclick = selectAll;
 searchButton.onclick = search;
 recordButton.onclick = record;

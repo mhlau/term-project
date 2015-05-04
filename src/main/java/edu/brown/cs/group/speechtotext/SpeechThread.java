@@ -126,14 +126,14 @@ public class SpeechThread extends Thread {
 	}
 	
 	public void run() {
-		recognizer.startRecognition(true);
-		System.out.println("READY");
-		SpeechResult result = recognizer.getResult();
-		for (WordResult r: result.getWords()){
-			if (!r.isFiller()){
-				Gui.words.add(r.getWord().toString());
-			}
-		}
+//		recognizer.startRecognition(true);
+//		System.out.println("READY");
+//		SpeechResult result = recognizer.getResult();
+//		for (WordResult r: result.getWords()){
+//			if (!r.isFiller()){
+//				Gui.words.add(r.getWord().toString());
+//			}
+//		}
 		int i = 0;
 		while (keepGoing){
 			i++;
@@ -149,8 +149,8 @@ public class SpeechThread extends Thread {
 	}
 	
 	public void stopRecognition() {
-		recognizer.stopRecognition();
-//		keepGoing = false;
+//		recognizer.stopRecognition();
+		keepGoing = false;
 	}
 	
 	
