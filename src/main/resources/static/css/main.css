@@ -4,7 +4,12 @@
 
 textarea {
 	resize: none;
+        float: left;
 }
+#visualizerA {
+	float: left;
+}
+
 
 #searchInput {
 	width: 400px;
