@@ -19,6 +19,7 @@ import edu.cmu.sphinx.result.WordResult;
 
 public class SpeechThread extends Thread {
   
+  private static boolean stopped = false;
   private Gson gson = new Gson();
   private boolean keepGoing = true;
   
@@ -46,31 +47,33 @@ public class SpeechThread extends Thread {
   }
   
   public void run() {
-//    recognizer.startRecognition(true);
-//    System.out.println("READY");
-//    SpeechResult result = recognizer.getResult();
-//    for (WordResult r: result.getWords()){
-//      if (!r.isFiller()){
-//        Gui.words.add(r.getWord().toString());
-//      }
-//    }
-    int i = 0;
-    while (keepGoing){
-      i++;
-      Gui.words.add("word " + i);
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+	  
+    recognizer.startRecognition(!stopped);
+    System.out.println("READY");
+    SpeechResult result = recognizer.getResult();
+    for (WordResult r: result.getWords()){
+      if (!r.isFiller()){
+        Gui.words.add(r.getWord().toString());
       }
     }
+//    int i = 0;
+//    while (keepGoing){
+//      i++;
+//      Gui.words.add("word " + i);
+//      try {
+//        Thread.sleep(1000);
+//      } catch (InterruptedException e) {
+//        // TODO Auto-generated catch block
+//        e.printStackTrace();
+//      }
+//    }
     
   }
   
   public void stopRecognition() {
-//    recognizer.stopRecognition();
-    keepGoing = false;
+	  stopped = true;
+	  recognizer.stopRecognition();
+//    keepGoing = false;
   }
   
   
