@@ -101,18 +101,6 @@ function unpackOrdering(num) {
   num = parseInt(num) - 40000;
   if (num < 0) {
     return def;
- var smooth = 0
-setInterval(function () {
-$.post("/visualize", null, function(responseJSON) {
-    var val = JSON.parse(responseJSON);
-    smooth = Math.round(smooth*.9 + val.level*.1);
-    console.log(val);
-    //searchButton.style.width = "" + Math.round(200*Math.exp(smooth/10000)) + "px";
-   // recordButton.style.width = "" + Math.round(200*Math.exp(smooth/10000)) + "px";
-   // var c = Math.min(255,Math.round(smooth/50));
-    //document.body.style.backgroundColor = "rgb("+125+","+c+","+c+")";
-    draw(smooth);
-  });}, 150);
   }
   for (var i = 0; i < 5; i++) {
      console.log(i);
