@@ -38,6 +38,7 @@ public class SongSourceDistance {
       }
       ln.close();
     }
+    scn.close();
     i = 0;
     for (Song song : songs) {
       Map<Short, Float>  nc = normCounts(song.getLyrics());
