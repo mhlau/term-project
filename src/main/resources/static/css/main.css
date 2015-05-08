@@ -1,3 +1,16 @@
+
+div::after {
+  content: "";
+  background: url("christmas-sheet-music-background-hd-pictures-4.jpg");
+  opacity: 0.02;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: -1;   
+}
+
 #titleText {
 	text-align: center;
 }

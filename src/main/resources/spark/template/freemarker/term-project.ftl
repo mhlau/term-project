@@ -1,6 +1,6 @@
 <#assign content>
 
-<h1 class="title" id="titleText">Automatic Song Chooser</h1>
+<h1 class="title" id="titleText"><b>Automatic Song Chooser</b></h1>
 <p hidden id="Restore">${oldResults}</p>
 <p hidden id="RestoreOrder">${resultsOrdering}</p>
 <div class="wrapper">
