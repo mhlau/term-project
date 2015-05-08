@@ -2,19 +2,25 @@
 	text-align: center;
 }
 
-textarea {
-	resize: none;
-        float: left;
+#textVis {
+	margin-left: auto;
+	margin-right: auto;
+	width: 800px;
+	height: 200px;
 }
+
 #visualizerA {
 	float: left;
 }
 
+#visualizerB {
+	float: right;
+}
 
 #searchInput {
 	width: 400px;
 	height: 200px;
-	display: block;
+	display: inline;
 	margin-left: auto;
 	margin-right: auto;
 }

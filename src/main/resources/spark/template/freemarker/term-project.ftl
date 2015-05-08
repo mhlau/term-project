@@ -1,15 +1,14 @@
 <#assign content>
 
-<h1 class="title" id="titleText">Speech-to-Text Music Finder</h1>
+<h1 class="title" id="titleText">Automatic Song Chooser</h1>
 <p hidden id="Restore">${oldResults}</p>
 <p hidden id="RestoreOrder">${resultsOrdering}</p>
 <div class="wrapper">
 	<br><br>
-    <div style="text-align: center">
-        <canvas id="visualizerA" width="370" height="200"></canvas>
-    <textarea id="searchInput">${boxContents}</textarea>
-            <canvas id="visualizerB" width="370" height="200"></canvas>
-    
+    <div id="textVis">
+        <canvas id="visualizerA" width="200" height="200"></canvas>
+    	<textarea id="searchInput">${boxContents}</textarea>
+        <canvas id="visualizerB" width="200" height="200"></canvas>
     </div>
     <br><br>
     <div style="text-align: center">

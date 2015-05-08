@@ -67,11 +67,11 @@ function draw(v, cv) {
   var avg = sum/queue.length
   if (cv.getContext) {
     var ctx = cv.getContext('2d');
-    ctx.clearRect ( 0 , 0 , 400,200);
+    ctx.clearRect ( 0 , 0 , 200,200);
     ctx.beginPath();
     
     //ctx.arc(100, Math.min(Math.round(100,v/200)),200000/v, Math.PI*.5 - Math.min(Math.PI*.5, v/3000),Math.PI*.5 + Math.min(Math.PI*.5, v/3000) );
-    ctx.arc(185,100,Math.min(v/50,100), 0,Math.PI*2);
+    ctx.arc(100,100,Math.min(v/50,100), 0,Math.PI*2);
     var c = Math.min(255,Math.round(1.5*avg));
     
     ctx.fillStyle = "rgb("+c+","+200+","+c+")";

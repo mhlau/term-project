@@ -1,0 +1,95 @@
+===========================================================================
+                #     #    #    ######   #####
+                ##   ##   # #   #     # #     #
+                # # # #  #   #  #     # #
+                #  #  # #     # ######   #####
+                #     # ####### #             #
+                #     # #     # #       #     #
+                #     # #     # #        #####
+===========================================================================
+Student: gpane 
+Grader: vgavriel
+===========================================================================
+Coding style and documentation
+===========================================================================
+    README                                                    |  4  |  10 |
+    Good Code                                                 |  6  |  10 |
+    Autotests (Checkstyle)                                    |  8  |  10 |
+===========================================================================
+Total                                                         | 18  |  30 |
+===========================================================================
+Testing
+===========================================================================
+    K-d Tree (Stars) tests                                    |  2  |   3 |
+    Graph (Bacon) tests                                       |  2  |   3 |
+    Suggestion (Autocorrect) tests                            |  1  |   3 |
+    Maps Server Internals tests                               |  1  |   4 |
+    System Tests                                              |  3  |   3 |
+    General Test (Let them explain what they tested in GUI)   |  4  |   4 |
+===========================================================================
+Total                                                         | 13  |  20 |
+===========================================================================
+Maps Implementation
+===========================================================================
+    Display Roads                                             |  8  |   8 |
+    Completion of the Autocorrect Suggestion (tab? click?)    |  4  |   4 |
+    Pans conveniently on mouse drag                           |  5  |   5 |
+    Zooms in + out on mouse scroll                            |  4  |   5 |
+    Accepts click for start/end                               |  4  |   4 |
+    Accepts typing for start/end                              |  4  |   4 |
+    Accepts 1 click + 1 type for start<->end                  |  0  |   1 |
+    Some way to clear interest points/route                   |  2  |   2 |
+    Fast enough for interactive use                           |  3  |   3 |
+    Handles no possible route                                 |  2  |   2 |
+    Handles nonexistant street name/intersection              |  2  |   2 |
+    Handles invalid maps database                             |  1  |   1 |
+    UI Doesn't hang
+      -During Path Finding                                    |  2  |   2 |
+      -During Autocomplete                                    |  2  |   2 |
+    Heap Reasonable (doesn't load in database all at once)    |  2  |   2 |
+    Server Quits Cleanly                                      |  2  |   2 |
+    Good Design                                               | 11  |  11 |
+    Swag Points beyond Good Design                            |  0  |   5 |
+===========================================================================
+Total                                                         | 58  |  60 |
+===========================================================================
+Traffic Implementation
+===========================================================================
+    Show traffic levels                                       |  5  |  10 |
+    Changes direction based on traffic                        |  0  |   7 |
+    Updates in "real time"                                    |  7  |   7 |
+    Uses colors to reasonably convey levels                   |  5  |   5 |
+    When Traffic server down
+      -At startup                                             |  2  |   2 |
+      -During Use                                             |  2  |   2 |
+    Connect to Non-server (e.g. www.amazon.com:80)            |  0  |   2 |
+    Proper locking of internal data                           |  5  |   5 |
+===========================================================================
+Total                                                         | 26  |  40 |
+===========================================================================
+Additional comments:
+
+Connect to Non-server: Your traffic thread should handle bad
+data coming from a traffic server. Since you catch any exception
+outside your while(true) loop, your thread stops execution when bad
+input is received (-2)
+
+README:
+No explanation on how to build/run your program (-2)
+No Server API documentation, calls made by client (-2)
+No Client GUI documentation (-2)
+
+Good Code:
+-2 for returning a mutable private instance variable (Node.java, getPrev())
+-2 constructors should not take in mutable data. You're building your
+  KDTree without copying the data that you're receiving. Thus, references
+  to this data can continue to exist after the construction of the tree,
+  and render the invariant of the tree corrupt.
+
+
+
+Checkstyle: 2 unique errors (-2)
+
+===========================================================================
+Final grade                                                   | 115 | 150 |
+===========================================================================
