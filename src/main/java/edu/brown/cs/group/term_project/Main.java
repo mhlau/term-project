@@ -30,7 +30,7 @@ public final class Main {
     if (args.length != NUM_ARGS) {
       System.out.println("USAGE: ./run <song database>"
         + "<word category file> <word sentiment file>");
-      System.out.println("For example,"
+      System.out.println("For example, "
         + "./run evenBiggerDB.sqlite3 alls.words NRCnice.txt ");
       System.exit(1);
     }

@@ -1,8 +1,6 @@
 package edu.brown.cs.group.speechtotext;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import edu.brown.cs.group.term_project.Gui;
 import edu.cmu.sphinx.api.Configuration;
@@ -43,20 +41,6 @@ public class SpeechThread extends Thread {
   }
 
   /**
-   * Removes words from Gui.words, adds them to a list and returns that list.
-   * @return .
-   */
-  public List<String> getWords() {
-    List<String> toReturn = new ArrayList<>();
-
-    while (!Gui.words.isEmpty()) {
-      toReturn.add(Gui.words.poll());
-    }
-
-    return toReturn;
-  }
-
-  /**
    * Called when the thread is started. Listens for speech input
    * and updates the cache in Gui with the recognized words.
    */
@@ -66,7 +50,7 @@ public class SpeechThread extends Thread {
     SpeechResult result = recognizer.getResult();
     for (WordResult r : result.getWords()) {
       if (!r.isFiller()) {
-        Gui.words.add(r.getWord().toString());
+        Gui.addWord(r.getWord().toString());
       }
     }
 // int i = 0;

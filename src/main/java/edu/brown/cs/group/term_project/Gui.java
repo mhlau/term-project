@@ -24,7 +24,6 @@ import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import com.google.common.collect.ImmutableMap;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -44,8 +43,11 @@ public final class Gui {
   private static final int PORT = 5235;
   private static Visualizer vis;
   private static SpeechThread speechThread = null;
+  private static final int URL_OFFSET = 100000;
+  private static final int WORD_WAIT = 500;
+  private static final int NUM_RESULTS = 5;
+  private static Queue<String> words = new LinkedList<>();
 
-  public static Queue<String> words = new LinkedList<>();
   private Gui() {
     //static class...
   }
@@ -56,6 +58,25 @@ public final class Gui {
     bufferedResponses = new ArrayList<JsonObject>();
     runSparkServer();
   }
+
+  /**
+   * Removes words from words, adds them to a list and returns that list.
+   * @return .
+   */
+  private static List<String> getWords() {
+    List<String> toReturn = new ArrayList<>();
+
+    while (!words.isEmpty()) {
+      toReturn.add(words.poll());
+    }
+
+    return toReturn;
+  } 
+
+  public static void addWord(String word) {
+    words.add(word);
+  }
+
   private static void runSparkServer() {
     FreeMarkerEngine freeMarker =  new FreeMarkerEngine();
     Spark.setPort(PORT);
@@ -67,6 +88,7 @@ public final class Gui {
     Spark.post("/download", new DownloadHandler());
     Spark.get("/:id", new ReloadHandler(), freeMarker);
   }
+
   private static class InitialLoadHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request request, Response response) {
@@ -79,7 +101,7 @@ public final class Gui {
       return new ModelAndView(variables, "term-project.ftl");
     }
   }
-  private static final int URL_OFFSET = 100000;
+
   private static class ReloadHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request request, Response response) {
@@ -116,7 +138,7 @@ public final class Gui {
       }
     }
   }
-  private static final int WORD_WAIT = 500;
+
   private static class RecordHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -130,32 +152,20 @@ public final class Gui {
           speechThread.start();
         }
         Thread.sleep(WORD_WAIT);
-        newWords = speechThread.getWords();
+        newWords = getWords();
       } catch (InterruptedException e) {
         e.printStackTrace();
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
-//      LiveMode lm;
-//      JsonArray resultArray = new JsonArray();
-//      try {
-//        lm = new LiveMode();
-//        for (String word : lm.getWords()) {
-//          JsonObject wordObject = new JsonObject();
-//          wordObject.addProperty("word", word);
-//          resultArray.add(wordObject);
-//        }
-//      } catch (IOException e) {
-//        e.printStackTrace();
-//      }
+
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("words", newWords)
           .build();
       return GSON.toJson(variables);
     }
   }
-  private static final int NUM_RESULTS = 5;
+  
   private static class YtVideoHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -232,6 +242,7 @@ public final class Gui {
       }
     }
   }
+
   private static class VisHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -241,6 +252,7 @@ public final class Gui {
       return GSON.toJson(variables);
     }
   }
+
   private static class DownloadHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
