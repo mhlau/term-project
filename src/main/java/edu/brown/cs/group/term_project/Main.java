@@ -45,7 +45,7 @@ public final class Main {
         new SongSourceDistance(
           new BufferedReader(
             new FileReader(args[2])) , allSongs), allSongs, TOPIC_WEIGHT);
-      new Gui(sm); // Gui.setup(sm)
+      Gui.setup(sm);
     } catch (ClassNotFoundException e) {
       System.out.println("Unable to connect to SQL database");
     } catch (IOException e) {
@@ -53,3 +53,4 @@ public final class Main {
     }
   }
 }
+
