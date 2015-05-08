@@ -1,0 +1,89 @@
+#titleText {
+	text-align: center;
+}
+
+textarea {
+	resize: none;
+        float: center;
+}
+#visualizerA {
+	float: left;
+}
+
+
+#searchInput {
+	width: 400px;
+	height: 200px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#recordButton {
+	margin: 0 auto;
+	display: inline-block;
+	position: relative;
+}
+
+#searchButton {
+	margin: 0 auto;
+	display: inline-block;
+	position: relative;
+}
+
+#downloadButton {
+	margin: 0 auto;
+	display: none;
+	position: relative;
+}
+
+#stopButton {
+	margin: 0 auto;
+	display: none;
+	position: relative;
+}
+
+#resultUrl {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#resultVideoDiv {
+	text-align: center;
+}
+
+.scroll-up {
+	height: 200px;
+ 	overflow: auto;
+ 	position: relative;
+}
+
+.scroll-up p {
+ 	position: absolute;
+ 	width: 100%;
+ 	height: 100%;
+ 	margin: 0;
+ 	line-height: 20px;
+
+ 	-webkit-transform: translateY(100%);
+ 	transform: translateY(100%);
+
+ 	-webkit-animation: scroll-up 120s ease-in infinite;
+ 	animation: scroll-up 120s ease-in infinite;
+}
+
+@-webkit-keyframes scroll-up {
+	0%   { -webkit-transform: translateY(100%); }
+	100% { -webkit-transform: translateY(-200%); }
+}
+@keyframes scroll-up {
+	0%   {
+ 		-webkit-transform: translateY(100%);
+ 		transform: translateY(100%); 		
+ 	}
+ 	100% {
+ 		-webkit-transform: translateY(-200%);
+ 		transform: translateY(-200%); 
+ 	}
+}
