@@ -12,7 +12,6 @@ import java.util.Scanner;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import spark.ModelAndView;
@@ -25,40 +24,38 @@ import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import com.google.common.collect.ImmutableMap;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.matcher.SongMatcher;
 import edu.brown.cs.group.speechtotext.SpeechThread;
-import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
 
-public class Gui {
-  
-  private static SongMatcher sm; 
+public final class Gui {
+  private static SongMatcher sm;
   private static List<String> bufferedRequests;
-  private static List<JsonObject> bufferedResponses;   
+  private static List<JsonObject> bufferedResponses;
   private static final boolean DEBUG = true;
-  private static final Gson GSON = new Gson(); 
+  private static final Gson GSON = new Gson();
   private static final int PORT = 5235;
-
   private static Visualizer vis;
-
-  public static SpeechThread speechThread = null;
+  private static SpeechThread speechThread = null;
 
   public static Queue<String> words = new LinkedList<>();
-
-  public Gui(SongMatcher sm) throws IOException {
-    Gui.sm = sm;
+  private Gui() {
+    //static class...
+  }
+  public static void setup(SongMatcher sim) throws IOException {
+    sm = sim;
     vis = new Visualizer();
     bufferedRequests = new ArrayList<String>();
-    bufferedResponses = new ArrayList<JsonObject>();    
+    bufferedResponses = new ArrayList<JsonObject>();
     runSparkServer();
   }
-  
   private static void runSparkServer() {
     FreeMarkerEngine freeMarker =  new FreeMarkerEngine();
     Spark.setPort(PORT);
@@ -68,9 +65,8 @@ public class Gui {
     Spark.post("/record", new RecordHandler());
     Spark.post("/visualize", new VisHandler());
     Spark.post("/download", new DownloadHandler());
-    Spark.get("/:id", new ReloadHandler(), freeMarker);   
+    Spark.get("/:id", new ReloadHandler(), freeMarker);
   }
-  
   private static class InitialLoadHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request request, Response response) {
@@ -83,65 +79,64 @@ public class Gui {
       return new ModelAndView(variables, "term-project.ftl");
     }
   }
-  
-  
+  private static final int URL_OFFSET = 100000;
   private static class ReloadHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request request, Response response) {
       int id = 0;
       boolean valid = true;
-      
       try {
         id = Integer.valueOf(request.params(":id"));
       } catch (NumberFormatException e) {
         valid = false;
       }
-      if (id/100000 >= bufferedRequests.size() || id/100000 < 0) {
+      if (id / URL_OFFSET >= bufferedRequests.size() || id / URL_OFFSET < 0) {
         valid = false;
       }
       if (valid) {
-        Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
+        Map<String, Object> variables
+          = new ImmutableMap.Builder<String, Object>()
             .put("title", "CS032 Term Project")
-            .put("boxContents",  bufferedRequests.get(id/100000))
-            .put("oldResults",  GSON.toJson(bufferedResponses.get(id/100000)))
-            .put("resultsOrdering",  GSON.toJson(new JsonPrimitive(id%100000)))
+            .put("boxContents",  bufferedRequests.get(id / URL_OFFSET))
+            .put("oldResults",  GSON.toJson(
+               bufferedResponses.get(id / URL_OFFSET)))
+            .put("resultsOrdering",  GSON.toJson(
+               new JsonPrimitive(id % URL_OFFSET)))
             .build();
         return new ModelAndView(variables, "term-project.ftl");
       } else {
-        Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
-          .put("title", "CS032 Term Project")
-          .put("boxContents", "Enter search text here.")
-          .put("oldResults", "")
-          .put("resultsOrdering", "")
-          .build();
-        return new ModelAndView(variables, "term-project.ftl");        
+        Map<String, Object> variables
+          = new ImmutableMap.Builder<String, Object>()
+              .put("title", "CS032 Term Project")
+              .put("boxContents", "Enter search text here.")
+              .put("oldResults", "")
+              .put("resultsOrdering", "")
+              .build();
+        return new ModelAndView(variables, "term-project.ftl");
       }
     }
-  }  
+  }
+  private static final int WORD_WAIT = 500;
   private static class RecordHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
       if (DEBUG) {
         System.out.println("[DEBUG] Recording.");
       }
-      
       List<String> newWords = null;
-      
       try {
-    	  if (speechThread == null){
-	    	  speechThread = new SpeechThread();
-	    	  speechThread.start();
-    	  }
-		  Thread.sleep(2000);
-	      newWords = speechThread.getWords();
-	  } catch (InterruptedException e) {
-		  e.printStackTrace();
-	  } catch (IOException e) {
-		// TODO Auto-generated catch block
-
-		e.printStackTrace();
-	}
-      
+        if (speechThread == null) {
+          speechThread = new SpeechThread();
+          speechThread.start();
+        }
+        Thread.sleep(WORD_WAIT);
+        newWords = speechThread.getWords();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 //      LiveMode lm;
 //      JsonArray resultArray = new JsonArray();
 //      try {
@@ -160,7 +155,7 @@ public class Gui {
       return GSON.toJson(variables);
     }
   }
-  
+  private static final int NUM_RESULTS = 5;
   private static class YtVideoHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -173,9 +168,7 @@ public class Gui {
       JsonObject resultObject = new JsonObject();
       JsonArray resultUrl = new JsonArray();
       JsonArray resultTitle = new JsonArray();
-      
       JsonArray resultLyrics = new JsonArray();
-      
       if (searchVal != null) {
         // Perform matching from input text to song name/artist.
         List<String> dialogue = new ArrayList<String>();
@@ -185,24 +178,26 @@ public class Gui {
           dialogue.add(sc.next().toLowerCase());
         }
         sc.close();
-        List<Song> res = sm.match(dialogue, 5);
+        List<Song> res = sm.match(dialogue, NUM_RESULTS);
         // Search Youtube for URLs corresponding to the top 5 matches.
         if (res.size() > 0) {
-
           for (int i = 0; i < res.size(); i++) {
             YouTubeSearchRunner.search(res.get(i).getTitle()
                 + " " +  res.get(i).getArtist());
             url = YouTubeSearchRunner.embedUrl();
             resultUrl.add(new JsonPrimitive(url));
-            resultTitle.add(new JsonPrimitive(YouTubeSearchRunner.resultTitle()));
-            resultLyrics.add(new JsonPrimitive(getLyricsHTML(res.get(i).getID())));
+            resultTitle.add(new JsonPrimitive(
+              YouTubeSearchRunner.resultTitle()));
+            resultLyrics.add(new JsonPrimitive(
+              getLyricsHTML(res.get(i).getID())));
           }
         }
       }
       resultObject.add("resultUrl", resultUrl);
       resultObject.add("resultTitle", resultTitle);
       resultObject.add("resultLyrics", resultLyrics);
-      resultObject.add("saveId", new JsonPrimitive(""+bufferedRequests.size()));
+      resultObject.add("saveId", new JsonPrimitive(
+        "" + bufferedRequests.size()));
       bufferedRequests.add(searchVal);
       bufferedResponses.add(resultObject);
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
@@ -213,38 +208,39 @@ public class Gui {
 
     private String getLyricsHTML(int songID) {
       try {
-        Document doc = Jsoup.connect("http://songmeanings.com/songs/view/" + songID).get();
+        Document doc = Jsoup.connect("http://songmeanings.com/songs/view/"
+          + songID).get();
         Elements lyrics = doc.body().getElementsByClass("lyric-box");
-        String l = lyrics.first().html().replace("<div style=\"min-height: 25px; margin:0; padding: 12px 0 0 0; border-top: 1px dotted #ddd;\">", "");
-        l = l.replace("<a href=\"/songs/edit/" + songID + "/\" id=\"lyrics-edit\" class=\"editbutton\" title=\"Edit Lyrics\">Edit Lyrics</a>", "");
-        l = l.replace("<a href=\"/songs/edit/" + songID + "/?type=wiki\" id=\"lyrics-wiki-edit\" class=\"editbutton\" title=\"Edit Song Wiki\">Edit Wiki</a>", "");
-        l = l.replace("<a href=\"/songs/edit/" + songID + "/?type=video\" id=\"lyrics-video-add\" class=\"editbutton\" title=\"Add Music Video\">Add Video</a>", "");
+        String l = lyrics.first().html().replace("<div style="
+          + "\"min-height: 25px; margin:0; padding: 12px 0 0 0; border-top:"
+          + "1px dotted #ddd;\">", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID
+          + "/\" id=\"lyrics-edit\" class=\"editbutton\""
+          + "title=\"Edit Lyrics\">Edit Lyrics</a>", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID
+          + "/?type=wiki\" id=\"lyrics-wiki-edit\" class="
+          + "\"editbutton\" title=\"Edit Song Wiki\">Edit Wiki</a>", "");
+        l = l.replace("<a href=\"/songs/edit/" + songID + "/?type=video\" id="
+          + "\"lyrics-video-add\" class=\"editbutton\" title=\"Add Music Video"
+          + "\">Add Video</a>", "");
         return l.replace("</div>", "");
 
       } catch (IOException e) {
-        System.err.println("ERROR: IOException when trying to get lyrics for video.");
+        System.err.println("ERROR: IOException when trying to get"
+          + "lyrics for video.");
         return "";
       }
     }
   }
-  
-
-  
-  
   private static class VisHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
-
-      
-
       Map<String, Object> variables = new ImmutableMap.Builder<String, Object>()
           .put("level", vis.getWord())
           .build();
       return GSON.toJson(variables);
     }
-
   }
-
   private static class DownloadHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -276,8 +272,6 @@ public class Gui {
           .put("success", true)
           .build();
       return GSON.toJson(variables);
-    }    
-
+    }
   }
-  
 }

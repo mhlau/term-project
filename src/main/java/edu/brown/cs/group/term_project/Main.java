@@ -44,6 +44,6 @@ public final class Main {
       new SongSourceDistance(
         new BufferedReader(new FileReader(args[2])) , allSongs),
       allSongs, .8);
-    new Gui(sm);
+    Gui.setup(sm);
   }
 }
