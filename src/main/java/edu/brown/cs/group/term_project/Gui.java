@@ -32,7 +32,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 import edu.brown.cs.group.matcher.SongMatcher;
-import edu.brown.cs.group.speechtotext.LiveMode;
 import edu.brown.cs.group.speechtotext.SpeechThread;
 import edu.brown.cs.group.lyricFinder.Song;
 import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
