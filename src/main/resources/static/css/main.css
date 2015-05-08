@@ -13,6 +13,8 @@ div::after {
 
 #titleText {
 	text-align: center;
+	font-family: Impact, Charcoal, sans-serif;
+	font-size: 400%;
 }
 
 #textVis {
