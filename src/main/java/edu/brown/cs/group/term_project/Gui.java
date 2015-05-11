@@ -14,6 +14,19 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import com.google.common.collect.ImmutableMap;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
+
+import edu.brown.cs.group.lyricFinder.Song;
+import edu.brown.cs.group.matcher.SongMatcher;
+import edu.brown.cs.group.speechtotext.SpeechThread;
+import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
+
 import spark.ModelAndView;
 import spark.QueryParamsMap;
 import spark.Request;
@@ -22,18 +35,9 @@ import spark.Route;
 import spark.Spark;
 import spark.TemplateViewRoute;
 import spark.template.freemarker.FreeMarkerEngine;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
-import edu.brown.cs.group.lyricFinder.Song;
-import edu.brown.cs.group.matcher.SongMatcher;
-import edu.brown.cs.group.speechtotext.SpeechThread;
-import edu.brown.cs.group.ytsearch.YouTubeSearchRunner;
-
+/**
+ * Class for handling graphical user interface.
+ */
 public final class Gui {
   private static SongMatcher sm;
   private static List<String> bufferedRequests;
@@ -47,10 +51,17 @@ public final class Gui {
   private static final int WORD_WAIT = 500;
   private static final int NUM_RESULTS = 5;
   private static Queue<String> words = new LinkedList<>();
-
+  /**
+   * Filler to mark the class as static.
+   */
   private Gui() {
     //static class...
   }
+  /**
+   * Initializer ste Gui, and starts the spark server.
+   * @param sim the SongMatcher
+   * @throws IOException if there is an io problem
+   */
   public static void setup(SongMatcher sim) throws IOException {
     sm = sim;
     vis = new Visualizer();
@@ -61,7 +72,7 @@ public final class Gui {
 
   /**
    * Removes words from words, adds them to a list and returns that list.
-   * @return .
+   * @return the words
    */
   private static List<String> getWords() {
     List<String> toReturn = new ArrayList<>();
@@ -71,8 +82,11 @@ public final class Gui {
     }
 
     return toReturn;
-  } 
-
+  }
+  /**
+   * Adds a word to the words list.
+   * @param word a word
+   */
   public static void addWord(String word) {
     words.add(word);
   }
@@ -88,7 +102,9 @@ public final class Gui {
     Spark.post("/download", new DownloadHandler());
     Spark.get("/:id", new ReloadHandler(), freeMarker);
   }
-
+  /**
+   * Handles initial page loading.
+   */
   private static class InitialLoadHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request request, Response response) {
@@ -101,7 +117,9 @@ public final class Gui {
       return new ModelAndView(variables, "term-project.ftl");
     }
   }
-
+  /**
+   * Handles page loading from a saved url.
+   */
   private static class ReloadHandler implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request request, Response response) {
@@ -138,7 +156,9 @@ public final class Gui {
       }
     }
   }
-
+  /**
+   * Handles requests for recorded sound.
+   */
   private static class RecordHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -165,7 +185,9 @@ public final class Gui {
       return GSON.toJson(variables);
     }
   }
-  
+  /**
+   * Handles requests song recommendations, and returns Youtube links.
+   */
   private static class YtVideoHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -242,7 +264,9 @@ public final class Gui {
       }
     }
   }
-
+  /**
+   * Handles requests for Visualizer data.
+   */
   private static class VisHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {
@@ -252,7 +276,9 @@ public final class Gui {
       return GSON.toJson(variables);
     }
   }
-
+  /**
+   * Handles requests for song downloading.
+   */
   private static class DownloadHandler implements Route {
     @Override
     public Object handle(Request request, Response response) {

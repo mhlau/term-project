@@ -10,7 +10,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import  edu.brown.cs.group.lyricFinder.Song;
-
+/**
+ * Gets a distance representing the difference in topic usage between a
+ * dialogue and any song in a database.
+ */
 public class SongSourceDistance {
   private Map<String, Set<Short>> topicNumbers;
   private Map<Song, short[]> countIndices;
@@ -18,6 +21,11 @@ public class SongSourceDistance {
   private Map<Short, Integer> catCounts;
   private short[] vi = null;
   private float[] vv = null;
+  /**
+   * Constructor for SongSourceDistance.
+   * @param in the file representing the song categories.
+   * @param songs the database of songs to process.
+   */
   public SongSourceDistance(BufferedReader in, List<Song> songs) {
     topicNumbers = new HashMap<String, Set<Short>>();
     countIndices = new HashMap<Song, short[]>();
@@ -56,6 +64,10 @@ public class SongSourceDistance {
       System.out.println(i++);
     }
   }
+  /**
+   * Sets the dialogue to measure the distances to.
+   * @param dialogue the dialogue, as a list of words.
+   */
   public void setDialogue(List<String> dialogue) {
     Map<Short, Float> v = normCounts(dialogue);
     vi = new short[v.size()];
@@ -68,6 +80,11 @@ public class SongSourceDistance {
       c++;
     }
   }
+  /**
+   * Returns the distance to the set dialogue.
+   * @param s the song to measure the distance to
+   * @return the distance
+   */
   public double distance(Song s) {
     return dist(countIndices.get(s), countValues.get(s), vi, vv);
   }

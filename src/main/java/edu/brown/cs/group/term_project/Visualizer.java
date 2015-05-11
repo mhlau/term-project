@@ -1,18 +1,24 @@
 package edu.brown.cs.group.term_project;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 //import java.nio.file.Files;
 
-
+/**
+ * Audio visualizer class. Uses pulseaudio monitors of audio outputs.
+ */
 public class Visualizer implements AutoCloseable {
   private List<BufferedReader> s;
   private List<Process> p;
   private int lastWord;
+  /**
+   * Constructor for audio visualizer class.
+   * @throws IOException if there is an exception in reading audio data.
+   */
   public Visualizer() throws IOException {
     s = new ArrayList<BufferedReader>();
     p =  new ArrayList<Process>();
@@ -41,7 +47,13 @@ public class Visualizer implements AutoCloseable {
     lastWord = 0;
   }
   private static final int BASE = 8;
-  private static final int SHORT_SIGN_CONSTANT = 65536;  
+  private static final int SHORT_SIGN_CONSTANT = 65536;
+  /**
+   * Returns a number representing the average amplitude of audio output
+   * since last call. If there has been no audio output,
+   * return the most recent value.
+   * @return the value
+   */
   public synchronized int getWord() {
     try {
       int tot = 0;
@@ -58,10 +70,15 @@ public class Visualizer implements AutoCloseable {
       }
       lastWord = tot / count;
     } catch (IOException e) {
-      //ioException
+      e.printStackTrace();
     }
     return lastWord;
   }
+  /**
+   * Kills associated audio monitoring processes, and associated input
+   * streams.
+   * @throws IOException if an input stream does.
+   */
   public void close() throws IOException {
     for (Process pr : p) {
       pr.destroy();
