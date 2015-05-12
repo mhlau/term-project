@@ -52,26 +52,15 @@ function changeSelected(i) {
   history.pushState(null,null,"/"+currentResults.saveId + "" + packOrdering(currentOrder));
 
 }
-var queue = [0]
-var prev = 0;
-function draw(v, cv) {
-  if (queue.length > 20) {
-    queue.shift();
-  }
-  queue.push(Math.abs(v-prev));
-  prev = v;
-  var sum = 0;
-  for (var i = 0; i < queue.length; i++) {
-    sum += queue[i];
-  }
-  var avg = sum/queue.length
+
+function draw(v, avg, cv) {
   if (cv.getContext) {
     var ctx = cv.getContext('2d');
-    ctx.clearRect ( 0 , 0 , 400,200);
+    ctx.clearRect ( 0 , 0 , 200,200);
     ctx.beginPath();
     
     //ctx.arc(100, Math.min(Math.round(100,v/200)),200000/v, Math.PI*.5 - Math.min(Math.PI*.5, v/3000),Math.PI*.5 + Math.min(Math.PI*.5, v/3000) );
-    ctx.arc(185,100,Math.min(v/50,100), 0,Math.PI*2);
+    ctx.arc(100,100,Math.min(v/50,100), 0,Math.PI*2);
     var c = Math.min(255,Math.round(1.5*avg));
     
     ctx.fillStyle = "rgb("+c+","+200+","+c+")";
@@ -219,7 +208,9 @@ $("a[data-text]").click(function(){
   return false;
 })
 
- var smooth = 0
+var smooth = 0
+var queue = [0]
+var prev = 0
 setInterval(function () {
 $.post("/visualize", null, function(responseJSON) {
     var val = JSON.parse(responseJSON);
@@ -228,8 +219,18 @@ $.post("/visualize", null, function(responseJSON) {
    // recordButton.style.width = "" + Math.round(200*Math.exp(smooth/10000)) + "px";
    // var c = Math.min(255,Math.round(smooth/50));
     //document.body.style.backgroundColor = "rgb("+c+","+200+","+c+")";
-    draw(smooth,canvasA);
-    draw(smooth,canvasB);    
+    if (queue.length > 20) {
+        queue.shift();
+      }
+      queue.push(Math.abs(smooth-prev));
+      prev = smooth;
+      var sum = 0;
+      for (var i = 0; i < queue.length; i++) {
+        sum += queue[i];
+      }
+      var avg = sum/queue.length
+    draw(smooth,avg,canvasA);
+    draw(smooth,avg,canvasB);    
   });}, 150);
 
 

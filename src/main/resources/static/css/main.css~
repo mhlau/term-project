@@ -1,41 +1,20 @@
-
-div::after {
-  content: "";
-  background: url("christmas-sheet-music-background-hd-pictures-4.jpg");
-  opacity: 0.02;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  position: absolute;
-  z-index: -1;   
-}
-
 #titleText {
 	text-align: center;
-	font-family: Impact, Charcoal, sans-serif;
-	font-size: 400%;
 }
 
-#textVis {
-	margin-left: auto;
-	margin-right: auto;
-	width: 800px;
-	height: 200px;
+textarea {
+	resize: none;
+        float: center;
 }
-
 #visualizerA {
 	float: left;
 }
 
-#visualizerB {
-	float: right;
-}
 
 #searchInput {
 	width: 400px;
 	height: 200px;
-	display: inline;
+	display: block;
 	margin-left: auto;
 	margin-right: auto;
 }
