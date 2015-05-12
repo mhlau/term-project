@@ -247,7 +247,7 @@ public final class Gui {
           + "\"min-height: 25px; margin:0; padding: 12px 0 0 0; border-top:"
           + "1px dotted #ddd;\">", "");
         l = l.replace("<a href=\"/songs/edit/" + songID
-          + "/\" id=\"lyrics-edit\" class=\"editbutton\""
+          + "/\" id=\"lyrics-edit\" class=\"editbutton\" "
           + "title=\"Edit Lyrics\">Edit Lyrics</a>", "");
         l = l.replace("<a href=\"/songs/edit/" + songID
           + "/?type=wiki\" id=\"lyrics-wiki-edit\" class="

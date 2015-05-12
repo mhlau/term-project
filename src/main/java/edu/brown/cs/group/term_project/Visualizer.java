@@ -68,7 +68,9 @@ public class Visualizer implements AutoCloseable {
             (i > Short.MAX_VALUE ? i - SHORT_SIGN_CONSTANT : i));
         }
       }
-      lastWord = tot / count;
+      if (count > 0) {
+        lastWord = tot / count;
+      }
     } catch (IOException e) {
       e.printStackTrace();
     }
